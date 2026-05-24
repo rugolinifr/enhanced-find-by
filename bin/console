@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\EntityManagerFactory;
+
+require_once 'vendor/autoload.php';
+
+$entityManager = EntityManagerFactory::createEntityManager();
+
+ConsoleRunner::run(
+    new SingleManagerProvider($entityManager)
+);

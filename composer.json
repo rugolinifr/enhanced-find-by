@@ -1,0 +1,43 @@
+{
+    "name": "rugolinifr/enhanced-find-by",
+    "description": "An API providing an enhanced `findBy()` method to fetch entities from a Doctrine ORM repository.",
+    "type": "library",
+    "keywords": [
+        "doctrine",
+        "ORM",
+        "find by",
+        "query builder",
+        "DQL",
+        "doctrine query language",
+        "join",
+        "where"
+    ],
+    "readme": "README.md",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Romain UGOLINI",
+            "role": "developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Rugolinifr\\EnhancedFindBy\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rugolinifr\\EnhancedFindBy\\Tests\\": "tests/",
+            "Rugolinifr\\EnhancedFindBy\\Proxy\\": "proxy/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "doctrine/orm": "^2||^3",
+        "symfony/var-exporter": "^6||^7||^8",
+        "symfony/cache": "^6||^7||^8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.1"
+    }
+}
