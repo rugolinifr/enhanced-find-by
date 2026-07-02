@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\SingleEntity;
 use DateTime;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class LessThanOrEqualOperatorTest extends AbstractTestSingleEntity
 {
@@ -52,6 +53,26 @@ class LessThanOrEqualOperatorTest extends AbstractTestSingleEntity
             'filter on less than or equal enum' => [
                 'criteria' => ['handSkill <=' => HandSkillEnum::RIGHT],
                 'expectedNames' => ['alice', 'bob'],
+            ],
+            'filter on less than or equal to embeddable string' => [
+                'criteria' => ['address->streetName <=' => 'Boulevard of the invalids'],
+                'expectedNames' => ['alice', 'bob'],
+            ],
+            'filter on less than or equal to embeddable integer' => [
+                'criteria' => ['address->number <=' => 50],
+                'expectedNames' => ['alice'],
+            ],
+            'filter on less than or equal to embeddable date' => [
+                'criteria' => ['address->creationDate <=' => new DateTimeImmutable('1915-11-01 15:00:00')],
+                'expectedNames' => ['alice', 'bob', 'carl'],
+            ],
+            'filter on less than or equal to embeddable float' => [
+                'criteria' => ['address->valueOverAveragePrice <=' => 1.25],
+                'expectedNames' => ['alice'],
+            ],
+            'filter on less than or equal to embeddable enum' => [
+                'criteria' => ['address->placeKind <=' => PlaceEnum::WAREHOUSE],
+                'expectedNames' => ['alice', 'bob', 'carl'],
             ],
         ];
     }

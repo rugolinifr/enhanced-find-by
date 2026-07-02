@@ -34,6 +34,14 @@ class LikeOperatorTest extends AbstractTestJoinedEntity
                 'criteria' => ['store.owner.description like' => 'Fanny%'],
                 'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
             ],
+            'filter on like embeddable transitive string 1/2' => [
+                'criteria' => ['store.owner.address->streetName like' => 'Eiffel%'],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on like embeddable transitive string 2/2' => [
+                'criteria' => ['store.owner.address->streetName like' => '%avenue'],
+                'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
         ];
     }
 }

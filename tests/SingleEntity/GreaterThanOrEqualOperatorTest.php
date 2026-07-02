@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\SingleEntity;
 use DateTime;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class GreaterThanOrEqualOperatorTest extends AbstractTestSingleEntity
 {
@@ -57,9 +58,29 @@ class GreaterThanOrEqualOperatorTest extends AbstractTestSingleEntity
                 ],
                 'expectedNames' => ['bob', 'carl'],
             ],
-            'filter on greater than or equal enum' => [
+            'filter on greater than or equal to or equal enum' => [
                 'criteria' => ['handSkill >=' => HandSkillEnum::RIGHT],
                 'expectedNames' => ['bob', 'carl'],
+            ],
+            'filter on greater than or equal to embeddable string' => [
+                'criteria' => ['address->streetName >=' => 'Boulevard of the invalids'],
+                'expectedNames' => ['bob', 'carl'],
+            ],
+            'filter on greater than or equal to embeddable integer' => [
+                'criteria' => ['address->number >=' => 50],
+                'expectedNames' => ['alice', 'bob', 'carl'],
+            ],
+            'filter on greater than or equal to embeddable date' => [
+                'criteria' => ['address->creationDate >=' => new DateTimeImmutable('1915-11-01 15:00:00')],
+                'expectedNames' => ['carl'],
+            ],
+            'filter on greater than or equal to embeddable float' => [
+                'criteria' => ['address->valueOverAveragePrice >=' => 1.25],
+                'expectedNames' => ['alice', 'bob', 'carl'],
+            ],
+            'filter on greater than or equal to embeddable enum' => [
+                'criteria' => ['address->placeKind >=' => PlaceEnum::WAREHOUSE],
+                'expectedNames' => ['carl'],
             ],
         ];
     }

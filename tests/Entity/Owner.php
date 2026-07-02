@@ -43,9 +43,13 @@ class Owner
     #[ORM\OneToMany(targetEntity: Store::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $stores;
 
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
+
     public function __construct()
     {
         $this->stores = new ArrayCollection();
+        $this->address = new Address();
     }
 
     public function getId(): ?int
@@ -167,4 +171,14 @@ class Owner
         return $this;
     }
 
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(Address $address): Owner
+    {
+        $this->address = $address;
+        return $this;
+    }
 }

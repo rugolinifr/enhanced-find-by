@@ -6,6 +6,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\JoinedEntity;
 
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class GreaterThanOrEqualOperatorTest extends AbstractTestJoinedEntity
 {
@@ -31,6 +32,26 @@ class GreaterThanOrEqualOperatorTest extends AbstractTestJoinedEntity
             ],
             'filter by greater than or equal enum' => [
                 'criteria' => ['store.owner.handSkill >=' => HandSkillEnum::RIGHT],
+                'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on greater than or equal embeddable transitive string' => [
+                'criteria' => ['store.owner.address->streetName >=' => 'Eiffel avenue'],
+                'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on greater than or equal embeddable transitive integer' => [
+                'criteria' => ['store.owner.address->number >=' => 250],
+                'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on greater than or equal embeddable transitive date' => [
+                'criteria' => ['store.owner.address->creationDate >=' => new DateTimeImmutable('2009-07-01 15:00:00')],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on greater than or equal embeddable transitive float' => [
+                'criteria' => ['store.owner.address->valueOverAveragePrice >=' => 0.99],
+                'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on greater than or equal embeddable transitive enum' => [
+                'criteria' => ['store.owner.address->placeKind >=' => PlaceEnum::HOUSE],
                 'expectedNames' => ['elderberry', 'fig', 'feijoa', 'filbert', 'farkleberry'],
             ],
         ];

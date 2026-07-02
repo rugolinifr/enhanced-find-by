@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\SingleEntity;
 use DateTime;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class EqualOperatorTest extends AbstractTestSingleEntity
 {
@@ -123,6 +124,30 @@ class EqualOperatorTest extends AbstractTestSingleEntity
             'filter on same enum' => [
                 'criteria' => ['handSkill =' => HandSkillEnum::RIGHT],
                 'expectedNames' => ['bob'],
+            ],
+            'filter on same embeddable string' => [
+                'criteria' => ['address->streetName =' => 'Boulevard of the invalids'],
+                'expectedNames' => ['bob'],
+            ],
+            'filter on same embeddable integer' => [
+                'criteria' => ['address->number =' => 50],
+                'expectedNames' => ['alice'],
+            ],
+            'filter on same embeddable boolean' => [
+                'criteria' => ['address->isInsideDomain =' => false],
+                'expectedNames' => ['alice', 'bob'],
+            ],
+            'filter on same embeddable date' => [
+                'criteria' => ['address->creationDate =' => new DateTimeImmutable('1915-11-01 15:00:00')],
+                'expectedNames' => ['carl'],
+            ],
+            'filter on same embeddable float' => [
+                'criteria' => ['address->valueOverAveragePrice =' => 1.25],
+                'expectedNames' => ['alice'],
+            ],
+            'filter on same embeddable enum' => [
+                'criteria' => ['address->placeKind =' => PlaceEnum::WAREHOUSE],
+                'expectedNames' => ['carl'],
             ],
         ];
     }

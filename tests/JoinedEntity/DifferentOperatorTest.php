@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Owner;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Store;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class DifferentOperatorTest extends AbstractTestJoinedEntity
 {
@@ -63,6 +64,30 @@ class DifferentOperatorTest extends AbstractTestJoinedEntity
             ],
             'filter by different from enum' => [
                 'criteria' => ['store.owner.handSkill !=' => HandSkillEnum::RIGHT],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive string' => [
+                'criteria' => ['store.owner.address->streetName !=' => 'Eiffel avenue'],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive integer' => [
+                'criteria' => ['store.owner.address->number !=' => 250],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive boolean' => [
+                'criteria' => ['store.owner.address->isInsideDomain !=' => false],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive date' => [
+                'criteria' => ['store.owner.address->creationDate !=' => new DateTimeImmutable('2009-07-01 15:00:00')],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive float' => [
+                'criteria' => ['store.owner.address->valueOverAveragePrice !=' => 0.99],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on different embeddable transitive enum' => [
+                'criteria' => ['store.owner.address->placeKind !=' => PlaceEnum::HOUSE],
                 'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
             ],
         ];

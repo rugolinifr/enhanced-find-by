@@ -30,13 +30,14 @@ class ComparisonFactory
         mixed $value,
     ): ComparisonInterface {
         $cleanPropertyPathAndOperator = $this->cleanPropertyPathAndOperator($propertyPathAndOperator);
-        $split = explode('.', $cleanPropertyPathAndOperator);
-        $size = count($split);
+        $splitPropertyPath = explode('.', $cleanPropertyPathAndOperator);
+        $size = count($splitPropertyPath);
         if ($size < 2) {
             throw new EFBInvalidArgumentException("The property path \"$propertyPathAndOperator\" is invalid.");
         }
-        $splitPropertyPath = array_slice($split, 0, $size - 1);
-        $operator = $split[$size - 1];
+        $splitPropertyPath = $this->cleanUpDoctrineEmbeddable($splitPropertyPath);
+        $operator = $splitPropertyPath[$size - 1];
+        $splitPropertyPath = array_slice($splitPropertyPath, 0, $size - 1);
         $comparison = $this->createAppropriateComparison(
             $cleanPropertyPathAndOperator,
             $splitPropertyPath,
@@ -79,6 +80,19 @@ class ComparisonFactory
             return $this->nullOrUnlikeness($cleanPropertyPathAndOperator, $splitPropertyPath, $operator, $value);
         }
         throw new EFBInvalidArgumentException("The property path \"$propertyPathAndOperator\" has invalid operator.");
+    }
+
+    /**
+     * @param string[] $splitPropertyPath
+     * @return string[]
+     */
+    private function cleanUpDoctrineEmbeddable(array $splitPropertyPath): array
+    {
+        $size = count($splitPropertyPath);
+        for ($i = 0; $i < $size; $i++) {
+            $splitPropertyPath[$i] = str_replace('->', '.', $splitPropertyPath[$i]);
+        }
+        return $splitPropertyPath;
     }
 
     /**
@@ -228,6 +242,7 @@ class ComparisonFactory
     {
         $cleanPropertyPath = $this->cleanPropertyPathAndOperator($propertyPath);
         $splitPropertyPath = explode('.', $cleanPropertyPath);
+        $splitPropertyPath = $this->cleanUpDoctrineEmbeddable($splitPropertyPath);
         $cleanSortStrategy = $this->cleanSortStrategy($sortStrategy);
         return new OrderBy(
             $cleanPropertyPath,
@@ -236,6 +251,13 @@ class ComparisonFactory
             $this->joinClauseProvider,
             $this->aliasedPropertyProvider,
         );
+    }
+
+    private function cleanPropertyPathAndOperator(string $propertyPathAndOperator): string
+    {
+        $cleanPropertyPathAndOperator = trim($propertyPathAndOperator);
+        $cleanPropertyPathAndOperator = preg_replace('/ {2,}/', ' ', $cleanPropertyPathAndOperator);
+        return str_replace(' ', '.', $cleanPropertyPathAndOperator);
     }
 
     private function cleanSortStrategy(string $sortStrategy): string
@@ -247,12 +269,5 @@ class ComparisonFactory
             return 'DESC';
         }
         throw new EFBInvalidArgumentException("Invalid sort strategy value \"$sortStrategy\".");
-    }
-
-    private function cleanPropertyPathAndOperator(string $propertyPathAndOperator): string
-    {
-        $cleanPropertyPathAndOperator = trim($propertyPathAndOperator);
-        $cleanPropertyPathAndOperator = preg_replace('/ {2,}/', ' ', $cleanPropertyPathAndOperator);
-        return str_replace(' ', '.', $cleanPropertyPathAndOperator);
     }
 }

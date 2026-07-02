@@ -54,6 +54,15 @@ $newborns = $finder->findBy(
 
 // fetches every extra-European `Person` entity with implicit joins on two other entities
 $extraEuropeans = $finder->findBy(Person::class, ['address.country.continent !=' => 'Europe']);
+
+// fetches every `Person` entity having long black hair from a Doctrine embeddable
+$blackHairedPersons = $finder->findBy(
+    Person::class,
+    [
+        'hair->length >' => 20,
+        'hair->color =' => 'black',  // Use arrow ("->") notation to filter against a Doctrine embeddable
+    ],
+);
 ```
 
 ### The `$from` parameter
@@ -268,11 +277,10 @@ $query->setMaxResults(30)->setFirstResult(60);
 
 ## Known limitations
 
-The enhanced `findBy()` can't perform:
-- `OUTER JOIN` clause,
-- `OR` operator in `WHERE` clause,
-- compare two entity properties,
-- compare a Doctrine embeddable element (the DQL syntax conflicts with the "implicit join" feature of this package).
+The enhanced `findBy()` can't:
+- perform `OUTER JOIN` clause,
+- perform `OR` operator in `WHERE` clause,
+- compare two entity properties.
 
 The `QueryBuilder` is still needed for the use cases listed above.
 

@@ -100,6 +100,36 @@ class OrderByClauseTest extends AbstractTestEntity
                 'orderBy' => ['id' => 'desc'],
                 'expectedNames' => ['carl', 'alice'],
             ],
+            'order by embeddable string' => [
+                'criteria' => [],
+                'orderBy' => ['address->streetName' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ],
+            'order by embeddable integer' => [
+                'criteria' => [],
+                'orderBy' => ['address->number' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ],
+            'order by embeddable float' => [
+                'criteria' => [],
+                'orderBy' => ['address->valueOverAveragePrice' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ],
+            'order by embeddable bool' => [
+                'criteria' => [],
+                'orderBy' => ['address->valueOverAveragePrice' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ],
+            'order by embeddable date' => [
+                'criteria' => [],
+                'orderBy' => ['address->creationDate' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ],
+            'order by embeddable backed enum' => [
+                'criteria' => [],
+                'orderBy' => ['address->placeKind' => 'DESC'],
+                'expectedNames' => ['carl', 'bob', 'alice'],
+            ]
             //TODO: error test on property repeated twice or more
         ];
     }

@@ -6,6 +6,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\Shared;
 
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Rugolinifr\EnhancedFindBy\Tests\Entity\Address;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Owner;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Product;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Store;
@@ -25,6 +26,12 @@ class AbstractFixture
         bool $isMale,
         ?string $description,
         HandSkillEnum $handSkill,
+        int $addressNumber,
+        string $streetName,
+        bool $isInsideDomain,
+        DateTimeImmutable $creationDate,
+        float $valueOverAveragePrice,
+        PlaceEnum $placeKind,
     ): Owner {
         $owner = new Owner();
         $owner
@@ -35,6 +42,14 @@ class AbstractFixture
             ->setIsMale($isMale)
             ->setDescription($description)
             ->setHandSkill($handSkill)
+            ->setAddress((new Address())
+                ->setNumber($addressNumber)
+                ->setStreetName($streetName)
+                ->setIsInsideDomain($isInsideDomain)
+                ->setCreationDate($creationDate)
+                ->setValueOverAveragePrice($valueOverAveragePrice)
+                ->setPlaceKind($placeKind)
+            )
         ;
         $this->entityManager->persist($owner);
         return $owner;

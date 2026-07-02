@@ -103,6 +103,56 @@ class OrderByClauseTest extends AbstractTestEntity
                 'orderBy' => ['store.name' => 'asc'],
                 'expectedNames' => $ericFirst,
             ],
+            'order by embeddable transitive string ascending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->streetName' => 'asc'],
+                'expectedNames' => $ericFirst,
+            ],
+            'order by embeddable transitive string descending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->streetName' => 'desc'],
+                'expectedNames' => $fannyFirst,
+            ],
+            'order by embeddable transitive integer ascending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->number' => 'asc'],
+                'expectedNames' => $ericFirst,
+            ],
+            'order by embeddable transitive integer descending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->number' => 'desc'],
+                'expectedNames' => $fannyFirst,
+            ],
+            'order by embeddable transitive float ascending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->valueOverAveragePrice' => 'asc'],
+                'expectedNames' => $ericFirst,
+            ],
+            'order by embeddable transitive float descending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->valueOverAveragePrice' => 'desc'],
+                'expectedNames' => $fannyFirst,
+            ],
+            'order by embeddable transitive date ascending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->creationDate' => 'asc'],
+                'expectedNames' => $fannyFirst,
+            ],
+            'order by embeddable transitive date descending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->creationDate' => 'desc'],
+                'expectedNames' => $ericFirst,
+            ],
+            'order by embeddable transitive enum ascending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->placeKind' => 'asc'],
+                'expectedNames' => $ericFirst,
+            ],
+            'order by embeddable transitive enum descending' => [
+                'criteria' => [],
+                'orderBy' => ['store.owner.address->placeKind' => 'desc'],
+                'expectedNames' => $fannyFirst,
+            ],
         ];
     }
 }

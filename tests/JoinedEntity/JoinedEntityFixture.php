@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\JoinedEntity;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\AbstractFixture;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class JoinedEntityFixture extends AbstractFixture
 {
@@ -28,6 +29,12 @@ class JoinedEntityFixture extends AbstractFixture
             true,
             'Damian has no store',
             HandSkillEnum::LEFT,
+            200,
+            'Debeaux street',
+            false,
+            new DateTimeImmutable('1995-02-01 15:00:00'),
+            1.3,
+            PlaceEnum::APARTMENT,
         );
     }
 
@@ -41,6 +48,12 @@ class JoinedEntityFixture extends AbstractFixture
             true,
             'Eric has juste one store',
             HandSkillEnum::RIGHT,
+            250,
+            'Eiffel avenue',
+            false,
+            new DateTimeImmutable('2009-07-01 15:00:00'),
+            0.99,
+            PlaceEnum::HOUSE,
         );
         $store = $this->createAndPersistStore('The Eric store', $eric);
         $this->createAndPersistProduct('elderberry', $store);
@@ -56,6 +69,12 @@ class JoinedEntityFixture extends AbstractFixture
             false,
             'Fanny has many stores',
             HandSkillEnum::BOTH,
+            300,
+            'Flaubert avenue',
+            true,
+            new DateTimeImmutable('1922-09-01 15:00:00'),
+            1.37,
+            PlaceEnum::WAREHOUSE,
         );
         $firstStore = $this->createAndPersistStore('The Fanny first store', $fanny);
         $this->createAndPersistProduct('fig', $firstStore);

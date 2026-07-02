@@ -6,6 +6,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\JoinedEntity;
 
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class LessThanOperatorTest extends AbstractTestJoinedEntity
 {
@@ -36,6 +37,26 @@ class LessThanOperatorTest extends AbstractTestJoinedEntity
             'filter by less than enum' => [
                 'criteria' => ['store.owner.handSkill <' => HandSkillEnum::RIGHT],
                 'expectedNames' => [],
+            ],
+            'filter on less than embeddable transitive string' => [
+                'criteria' => ['store.owner.address->streetName <' => 'Flaubert avenue'],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on less than embeddable transitive integer' => [
+                'criteria' => ['store.owner.address->number <' => 300],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on less than embeddable transitive date' => [
+                'criteria' => ['store.owner.address->creationDate <' => new DateTimeImmutable('2009-07-01 15:00:00')],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on less than embeddable transitive float' => [
+                'criteria' => ['store.owner.address->valueOverAveragePrice <' => 1.37],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on less than embeddable transitive enum' => [
+                'criteria' => ['store.owner.address->placeKind <' => PlaceEnum::WAREHOUSE],
+                'expectedNames' => ['elderberry'],
             ],
         ];
     }

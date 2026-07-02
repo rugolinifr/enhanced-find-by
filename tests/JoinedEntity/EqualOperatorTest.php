@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Owner;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Store;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class EqualOperatorTest extends AbstractTestJoinedEntity
 {
@@ -95,6 +96,30 @@ class EqualOperatorTest extends AbstractTestJoinedEntity
             ],
             'filter by equal to enum' => [
                 'criteria' => ['store.owner.handSkill =' => HandSkillEnum::RIGHT],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive string' => [
+                'criteria' => ['store.owner.address->streetName =' => 'Eiffel avenue'],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive integer' => [
+                'criteria' => ['store.owner.address->number =' => 250],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive boolean' => [
+                'criteria' => ['store.owner.address->isInsideDomain =' => false],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive date' => [
+                'criteria' => ['store.owner.address->creationDate =' => new DateTimeImmutable('2009-07-01 15:00:00')],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive float' => [
+                'criteria' => ['store.owner.address->valueOverAveragePrice =' => 0.99],
+                'expectedNames' => ['elderberry'],
+            ],
+            'filter on same embeddable transitive enum' => [
+                'criteria' => ['store.owner.address->placeKind =' => PlaceEnum::HOUSE],
                 'expectedNames' => ['elderberry'],
             ],
         ];

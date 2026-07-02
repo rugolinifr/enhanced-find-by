@@ -6,7 +6,6 @@ namespace Rugolinifr\EnhancedFindBy\Tests\JoinedEntity;
 
 class NotLikeOperatorTest extends AbstractTestJoinedEntity
 {
-
     public static function provideJoinedEntityManyToOneCriteria(): array
     {
         return [
@@ -32,6 +31,14 @@ class NotLikeOperatorTest extends AbstractTestJoinedEntity
             ],
             'filter by not start on multiple transitive string' => [
                 'criteria' => ['store.owner.name not_like' => ['e%', 'f%']],
+                'expectedNames' => [],
+            ],
+            'filter on not like embeddable transitive string 1/2' => [
+                'criteria' => ['store.owner.address->streetName not_like' => 'Eiffel%'],
+                'expectedNames' => ['fig', 'feijoa', 'filbert', 'farkleberry'],
+            ],
+            'filter on not like embeddable transitive string 2/2' => [
+                'criteria' => ['store.owner.address->streetName not_like' => '%avenue'],
                 'expectedNames' => [],
             ],
         ];

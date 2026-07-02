@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\SingleEntity;
 use DateTime;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class DifferentOperatorTest extends AbstractTestSingleEntity
 {
@@ -130,6 +131,44 @@ class DifferentOperatorTest extends AbstractTestSingleEntity
             'filter on different from enum' => [
                 'criteria' => ['handSkill !=' => HandSkillEnum::RIGHT],
                 'expectedNames' => ['alice', 'carl'],
+            ],
+            'filter on different from embeddable string' => [
+                'criteria' => ['address->streetName !=' => 'Boulevard of the invalids'],
+                'expectedNames' => ['alice', 'carl'],
+            ],
+            'filter on different from embeddable integer' => [
+                'criteria' => ['address->number !=' => 50],
+                'expectedNames' => ['bob', 'carl'],
+            ],
+            'filter on different from embeddable boolean' => [
+                'criteria' => ['address->isInsideDomain !=' => false],
+                'expectedNames' => ['carl'],
+            ],
+            'filter on different from embeddable date' => [
+                'criteria' => ['address->creationDate !=' => new DateTimeImmutable('1915-11-01 15:00:00')],
+                'expectedNames' => ['alice', 'bob'],
+            ],
+            'filter on different from embeddable float' => [
+                'criteria' => ['address->valueOverAveragePrice !=' => 1.25],
+                'expectedNames' => ['bob', 'carl'],
+            ],
+            'filter on different from embeddable enum' => [
+                'criteria' => ['address->placeKind !=' => PlaceEnum::WAREHOUSE],
+                'expectedNames' => ['alice', 'bob'],
+            ],
+            'filter on same embeddable string and regular string (multiple condition) 1/2' => [
+                'criteria' => [
+                    'address->streetName !=' => 'Antoinette street',
+                    'name !=' => 'carl',
+                ],
+                'expectedNames' => ['bob'],
+            ],
+            'filter on same embeddable string and regular string (multiple condition) 2/2' => [
+                'criteria' => [
+                    'name !=' => 'carl',
+                    'address->streetName !=' => 'Antoinette street',
+                ],
+                'expectedNames' => ['bob'],
             ],
         ];
     }

@@ -7,6 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Tests\SingleEntity;
 use DateTimeImmutable;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\AbstractFixture;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\HandSkillEnum;
+use Rugolinifr\EnhancedFindBy\Tests\Shared\PlaceEnum;
 
 class SingleEntityFixture extends AbstractFixture
 {
@@ -20,6 +21,12 @@ class SingleEntityFixture extends AbstractFixture
             false,
             null,
             HandSkillEnum::LEFT,
+            50,
+            'Antoinette street',
+            false,
+            new DateTimeImmutable('1750-01-01 15:00:00'),
+            1.25,
+            PlaceEnum::APARTMENT,
         );
         $this->createAndPersistOwner(
             'bob',
@@ -29,6 +36,12 @@ class SingleEntityFixture extends AbstractFixture
             true,
             'Bob is a guy',
             HandSkillEnum::RIGHT,
+            100,
+            'Boulevard of the invalids',
+            false,
+            new DateTimeImmutable('1887-10-01 15:00:00'),
+            1.50,
+            PlaceEnum::HOUSE,
         );
         $this->createAndPersistOwner(
             'carl',
@@ -38,6 +51,12 @@ class SingleEntityFixture extends AbstractFixture
             true,
             'Carl is a guy too',
             HandSkillEnum::BOTH,
+            150,
+            'Christian avenue',
+            true,
+            new DateTimeImmutable('1915-11-01 15:00:00'),
+            1.75,
+            PlaceEnum::WAREHOUSE,
         );
         $this->entityManager->flush();
     }
