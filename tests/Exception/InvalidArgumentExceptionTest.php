@@ -26,6 +26,9 @@ class InvalidArgumentExceptionTest extends AbstractTestEntity
         $this->thenIGetInvalidArgumentException();
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function provideInvalidArgumentData(): array
     {
         return [
@@ -187,6 +190,9 @@ class InvalidArgumentExceptionTest extends AbstractTestEntity
         $this->thenIGetInvalidArgumentException();
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function provideInvalidOrderBY(): array
     {
         return [
@@ -213,6 +219,9 @@ class InvalidArgumentExceptionTest extends AbstractTestEntity
         $this->thenIGetInvalidArgumentException();
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function provideInvalidLimit(): array
     {
         return [

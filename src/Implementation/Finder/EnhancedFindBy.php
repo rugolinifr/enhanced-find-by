@@ -14,6 +14,7 @@ use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedFindByException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 
 class EnhancedFindBy implements EnhancedFindByInterface
 {
@@ -152,7 +153,7 @@ class EnhancedFindBy implements EnhancedFindByInterface
             $where .= $comparison->getWhereDql($incrementor);
             $where .= ' AND ';
         }
-        $where = preg_replace('/ AND $/', '', $where);
+        $where = SF::preg_replace('/ AND $/', '', $where);
         return empty($where) ? '': "WHERE $where";
     }
 
@@ -165,7 +166,7 @@ class EnhancedFindBy implements EnhancedFindByInterface
         foreach ($orderByClauses as $orderBy) {
             $dql .= $orderBy->getOrderByDql($incrementor) . ", ";
         }
-        $dql = preg_replace('/, $/', '', $dql);
+        $dql = SF::preg_replace('/, $/', '', $dql);
         return empty($dql) ? '' : "ORDER BY $dql";
     }
 

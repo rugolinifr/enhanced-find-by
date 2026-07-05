@@ -15,6 +15,7 @@ use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 
 class ComparisonFactory
 {
@@ -255,9 +256,9 @@ class ComparisonFactory
 
     private function cleanPropertyPathAndOperator(string $propertyPathAndOperator): string
     {
-        $cleanPropertyPathAndOperator = trim($propertyPathAndOperator);
-        $cleanPropertyPathAndOperator = preg_replace('/ {2,}/', ' ', $cleanPropertyPathAndOperator);
-        return str_replace(' ', '.', $cleanPropertyPathAndOperator);
+        $cleaned = trim($propertyPathAndOperator);
+        $cleaned = SF::preg_replace('/ {2,}/', ' ', $cleaned);
+        return str_replace(' ', '.', $cleaned);
     }
 
     private function cleanSortStrategy(string $sortStrategy): string

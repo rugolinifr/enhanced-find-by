@@ -30,5 +30,8 @@ abstract class AbstractTestJoinedEntity extends AbstractTestEntity
         $this->thenIGetExpectedEntities($expectedNames, 'product');
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     abstract public static function provideJoinedEntityManyToOneCriteria(): array;
 }

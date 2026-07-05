@@ -1,6 +1,7 @@
 FROM php:8.5-alpine3.23
 
 ADD --chmod=755 https://getcomposer.org/download/2.9.8/composer.phar /usr/local/bin/composer
+ADD --chmod=755 https://github.com/phpstan/phpstan/releases/download/2.2.5/phpstan.phar /usr/local/bin/phpstan
 
 RUN apk update &&\
     apk add --virtual php_dependencies $PHPIZE_DEPS &&\

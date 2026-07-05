@@ -1,0 +1,18 @@
+parameters:
+  level: 8
+  paths:
+    - src
+    - tests
+  ignoreErrors:
+  - message: '#^Property.*::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+    paths:
+      - 'tests/Entity/*'
+  exceptions:
+    uncheckedExceptionClasses:
+      - 'LogicException'
+      - 'RuntimeException'
+      - 'Error'
+    check:
+      missingCheckedExceptionInThrows: true
+    reportUncheckedExceptionDeadCatch: true
+    implicitThrows: false

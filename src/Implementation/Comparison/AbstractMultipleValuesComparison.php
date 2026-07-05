@@ -8,6 +8,7 @@ use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 
 abstract class AbstractMultipleValuesComparison extends AbstractComparison
 {
@@ -64,6 +65,6 @@ abstract class AbstractMultipleValuesComparison extends AbstractComparison
             }
             $where .= " $this->jonctionOperator ";
         }
-        return preg_replace("/ $this->jonctionOperator $/", ' )', $where);
+        return SF::preg_replace("/ $this->jonctionOperator $/", ' )', $where);
     }
 }

@@ -16,12 +16,18 @@ class AliasedPropertyProvider
         return "$alias.$lastProperty";
     }
 
+    /**
+     * @param string[] $splitPropertyPath
+     */
     private function getLastProperty(array $splitPropertyPath): string
     {
         $pathSize = count($splitPropertyPath);
         return $splitPropertyPath[$pathSize - 1];
     }
 
+    /**
+     * @param string[] $splitPropertyPath
+     */
     private function getEntityAlias(array $splitPropertyPath, Incrementor $incrementor): string
     {
         $pathSize = count($splitPropertyPath);

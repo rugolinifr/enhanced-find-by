@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rugolinifr\EnhancedFindBy\Implementation\Shared;
 
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
+
 class Incrementor
 {
     /** @var array<string, mixed> with [ :parameterName => parameterValue ] */
@@ -47,7 +49,7 @@ class Incrementor
         }
         $entityName = array_find_key($this->entities, fn(string $target) => $target === $propertyPath);
         if ($entityName === null) {
-            $previousPropertyPath = preg_replace('/\.?[a-zA-Z0-9_]+$/', '', $propertyPath);
+            $previousPropertyPath = SF::preg_replace('/\.?[a-zA-Z0-9_]+$/', '', $propertyPath);
             $this->addPropertyPathRecursively($previousPropertyPath);
             $entityName = 'e' . count($this->entities) + 1;
             $this->entities[$entityName] = $propertyPath;

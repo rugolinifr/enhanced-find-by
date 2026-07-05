@@ -291,6 +291,7 @@ To contribute or to inspect the project,
 ```shell
 docker compose up -d --build --force-recreate
 docker compose exec php vendor/bin/phpunit tests
+docker compose exec php php -d memory_limit=-1 /usr/local/bin/phpstan analyze
 ```
 
 The test database may be opened with:
