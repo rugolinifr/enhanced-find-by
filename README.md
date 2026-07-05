@@ -7,7 +7,7 @@ but offering more capabilities to execute more complex (but still simple) querie
 
 The original Doctrine `findBy()` method is pretty limited:
 - it provides only two SQL operators: `=` and `IN ()`,
-- it filters on the properties owned by the target entity and nothing else,
+- it filters only on the properties owned by the target entity,
 
 whereas the *enhanced* `findBy()` method:
 - offers many SQL operators: `=`, `IN ()`, `!=`, `NOT IN()`, `<`, `<=`, `>`, `>=`, `LIKE`, `NOT LIKE`, `IS NULL`,
@@ -30,7 +30,7 @@ Developers should use only:
 - the `Rugolinifr\EnhancedFindBy\Factory\EnhancedFindByFactory` factory,
 - any class from the `Rugolinifr\EnhancedFindBy\Contract` namespace.
 
-Other classes are considered as `@internal`.
+Other classes are considered `@internal`.
 
 Basic usage examples:
 ```php
@@ -120,7 +120,7 @@ This operator accepts the following types: `string`, `int`, `float`, `bool`, `\B
 Note that this operator handles null values using the `IS NULL` operator.
 
 Note that comparing nullable properties returns the expected result
-(the DBMS considers`NULL = 'foo'` as `unknown` which is not `true` so the row is discarded).
+(the DBMS considers `NULL = 'foo'` as `unknown` which is not `true` and therefore the row is discarded).
 
 Note that an `array` of values behaves like the `IN ()` operator,
 but handles `null` values inside the array with a `IS NULL` operator.
@@ -140,7 +140,7 @@ as argument creates a comparison using the `IS NOT NULL` operator.
 Note that this operator is not null-safe:
 when comparing nullable properties,
 it does not return the expected result
-(the DBMS considers `NULL != 'foo'` as `unknown` which is not `true` so the row is discarded).
+(the DBMS considers `NULL != 'foo'` as `unknown` which is not `true` and therefore the row is discarded).
 
 Consider using the `!==` operator on nullable properties.
 
@@ -154,7 +154,7 @@ but forbids `null` (or an array having `null`) as given argument.
 On the other hand,
 it is null-safe:
 when comparing nullable properties,
-it returns the expected result (`NULL != 'foo'` is `true` so the row is returned).
+it returns the expected result (`NULL != 'foo'` is `true` and therefore the row is returned).
 Internally,
 this is done by prepending the DQL condition with `property IS NULL OR`.
 
@@ -192,7 +192,7 @@ The `%` character acts as the `.*` regex expression.
 Example: 
 
 ```php
-// fetches every person having a description starting with "Once upon a time"
+// fetches every Person having a description starting with "Once upon a time"
 $finder->findBy(Person::class, ['description like' => 'Once upon a time%']);
 ```
 
@@ -207,7 +207,7 @@ See the `like` operator for information about the `%` character.
 Note that this operator is not null-safe:
 when comparing nullable properties,
 it does not return the expected result
-(the DBMS considers `NULL NOT LIKE 'foo'` as `unknown` which is not `true` so the row is discarded).
+(the DBMS considers `NULL NOT LIKE 'foo'` as `unknown` which is not `true` and therefore the row is discarded).
 
 Consider using the `n_not_like` operator on nullable properties.
 
@@ -217,7 +217,7 @@ Returns `true` if and only if the property value is null or does not contain the
 `false` otherwise.
 
 This operator has the same characteristics as the `not_like` operator,
-except it is null-safe (`NULL NOT LIKE 'foo'` is `true` so the row is returned).
+except it is null-safe (`NULL NOT LIKE 'foo'` is `true` and therefore the row is returned).
 Internally,
 this is done by prepending the DQL condition with `property IS NULL OR`.
 
