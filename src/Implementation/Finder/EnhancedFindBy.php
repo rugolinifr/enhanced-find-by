@@ -45,7 +45,7 @@ class EnhancedFindBy implements EnhancedFindByInterface
             $query = $this->setQueryParameters($incrementor, $query);
             $query = $this->setLimit($limit, $offset, $query);
             return $query->getResult();
-        } catch (DoctrineOrmQueryException $e) {
+        } catch (DoctrineOrmQueryException $e) { //@phpstan-ignore catch.neverThrown
             throw $this->buildAppropriateException($e);
         }
     }
@@ -193,7 +193,7 @@ class EnhancedFindBy implements EnhancedFindByInterface
         return $query;
     }
 
-    private function buildAppropriateException(
+    private function buildAppropriateException( //@phpstan-ignore method.unused
         DoctrineOrmQueryException $e,
     ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
         $pattern = '/has no field or association named ([a-zA-Z0-9_]+)/';

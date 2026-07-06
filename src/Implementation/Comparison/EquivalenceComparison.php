@@ -69,9 +69,15 @@ class EquivalenceComparison extends AbstractMultipleValuesComparison
 
     private function isEntity(mixed $value): bool
     {
+            return is_object($value) && $this->isDoctrineEntity($value);
+    }
+
+    private function isDoctrineEntity(object $object): bool
+    {
         try {
-            return is_object($value) && $this->entityManager->getClassMetadata($value::class) !== null;
-        } catch (Throwable) {
+            $this->entityManager->getClassMetadata($object::class);
+            return true;
+        } catch (Throwable) { //@phpstan-ignore catch.neverThrown
             return false;
         }
     }
