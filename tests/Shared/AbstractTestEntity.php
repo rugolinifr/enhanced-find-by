@@ -38,7 +38,10 @@ class AbstractTestEntity extends TestCase
     }
 
     /**
+     * @template T of object
+     *
      * @param array<string, mixed> $criteria
+     * @param class-string<T> $className
      */
     protected function whenISearchEntityByOperator(
         array $criteria,
@@ -46,15 +49,18 @@ class AbstractTestEntity extends TestCase
     ): void {
         try {
             $criteria = $this->convertDullEntitiesByRealEntities($criteria);
-            $this->resultSet = static::$finder->findBy($className, $criteria);
+            $this->resultSet = static::$finder->findBy($className, $criteria); //@phpstan-ignore assign.propertyType
         } catch (EnhancedFindByExceptionInterface|EnhancedFindByInvalidArgumentException $e) {
             $this->lastException = $e;
         }
     }
 
     /**
+     * @template T of object
+     *
      * @param array<string, mixed> $criteria
      * @param array<string, string> $orderBy
+     * @param class-string<T> $from
      */
     protected function whenIOrderByEntity(
         array $criteria,
@@ -62,7 +68,7 @@ class AbstractTestEntity extends TestCase
         string $from,
     ): void {
         try {
-            $this->resultSet = static::$finder->findBy($from, $criteria, $orderBy);
+            $this->resultSet = static::$finder->findBy($from, $criteria, $orderBy); //@phpstan-ignore assign.propertyType
         } catch (EnhancedFindByExceptionInterface|EnhancedFindByInvalidArgumentException $e) {
             $this->lastException = $e;
         }
@@ -94,13 +100,22 @@ class AbstractTestEntity extends TestCase
     {
         $converter = function (mixed &$value): void {
             if ($value instanceof Owner || $value instanceof Store || $value instanceof Product) {
-                $value = $this->fetchRealEntity($value->getName(), $value::class);
+                $entityName = $value->getName();
+                if ($entityName === null) {
+                    throw new RuntimeException('The dull entity to convert has no name.');
+                }
+                $value = $this->fetchRealEntity($entityName, $value::class);
             }
         };
         array_walk_recursive($criteria, $converter);
         return $criteria;
     }
 
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $className
+     */
     private function fetchRealEntity(string $entityName, string $className): Owner|Store|Product
     {
         $entities = static::$entityManager
@@ -129,13 +144,22 @@ class AbstractTestEntity extends TestCase
             $this->lastException,
             "Enhanced findBy() throw an exception: {$this->lastException?->getMessage()}",
         );
+        $this->assertIsArray(
+            $this->resultSet,
+            "Enhanced findBy() did not return an array of $entityName."
+        );
         $this->assertCount(
             count($expectedNames),
             $this->resultSet,
             "Enhanced findBy() did not return the expected number of $entityName.",
         );
         foreach ($expectedNames as $index => $expectedName) {
-            $name = $this->resultSet[$index]->getName();
+            $entity = $this->resultSet[$index] ?? null;
+            $this->assertNotNull(
+                $entity,
+                "Enhanced findBy() did not return an array with numeric keys, or expected names are broken."
+            );
+            $name = $entity->getName();
             $this->assertSame(
                 $expectedName,
                 $name,
