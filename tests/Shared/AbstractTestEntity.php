@@ -130,7 +130,7 @@ class AbstractTestEntity extends TestCase
             $msg = "There is more than one entity \"$className\" named \"$entityName\". Fixtures are broken.";
             throw new RuntimeException($msg);
         }
-        return $entities[0];
+        return $entities[0]; //@phpstan-ignore return.type
     }
 
     /**
