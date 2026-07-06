@@ -10,6 +10,9 @@ use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
 
 class OrderBy
 {
+    /**
+     * @param string[] $splitPropertyPath
+     */
     public function __construct(
         public string $propertyPath,
         public array $splitPropertyPath,

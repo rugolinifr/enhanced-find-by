@@ -29,6 +29,9 @@ class OrderByClauseTest extends AbstractTestEntity
         $this->thenIGetExpectedEntities($expectedNames, Owner::class);
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function provideOrderByData(): array
     {
         return [

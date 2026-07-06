@@ -32,6 +32,9 @@ class LimitClauseTest extends AbstractTestEntity
         $this->thenIGetExpectedEntities($expectedNames, Owner::class);
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function provideLimitClauses(): array
     {
         return [
