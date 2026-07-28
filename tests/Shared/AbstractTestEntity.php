@@ -102,6 +102,12 @@ class AbstractTestEntity extends TestCase
         }
     }
 
+    /**
+     * @template T
+     *
+     * @param class-string<T> $classname
+     * @param array<string, mixed> $where
+     */
     protected function whenICountEntities(
         string $classname,
         array $where,

@@ -19,6 +19,9 @@ class CountTest extends AbstractTestEntity
     }
 
     /**
+     * @template T
+     *
+     * @param class-string<T> $classname
      * @param array<string, mixed> $where
      */
     #[DataProvider('provideDataForSingleEntityCount')]

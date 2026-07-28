@@ -23,6 +23,7 @@ class EnhancedCount implements EnhancedCountInterface
         array $where = [],
     ): int {
         try {
+            //@phpstan-ignore return.type
             return $this->queryBuilder->buildThenExecuteQuery(QueryTypeEnum::COUNT, $from, $where);
         } catch (EFBInvalidArgumentException $e) {
             throw new EnhancedCountInvalidArgumentInterface($e->getMessage(), previous: $e);

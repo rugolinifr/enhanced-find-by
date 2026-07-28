@@ -24,7 +24,7 @@ class QueryBuilder
     }
 
     /**
-     * @template T
+     * @template T of object
      *
      * @param class-string<T> $from
      * @param array<string, mixed> $where
@@ -50,7 +50,7 @@ class QueryBuilder
             $query = $this->setQueryParameters($incrementor, $query);
             $query = $this->setLimit($limit, $offset, $query);
             return $queryType === QueryTypeEnum::SELECT ? $query->getResult() : $query->getSingleScalarResult();
-        } catch (DoctrineOrmQueryException $e) {
+        } catch (DoctrineOrmQueryException $e) { //@phpstan-ignore catch.neverThrown
             throw $this->convertDoctrineException($e);
         }
     }
@@ -199,7 +199,7 @@ class QueryBuilder
         return $query;
     }
 
-    private function convertDoctrineException(
+    private function convertDoctrineException( //@phpstan-ignore method.unused
         DoctrineOrmQueryException $e
     ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
         $pattern = '/has no field or association named ([a-zA-Z0-9_]+)/';

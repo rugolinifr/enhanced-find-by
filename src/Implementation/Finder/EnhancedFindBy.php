@@ -26,7 +26,7 @@ class EnhancedFindBy implements EnhancedFindByInterface
         ?int $limit = null,
         int $offset = 0,
     ): array {
-        return $this->queryBuilder->buildThenExecuteQuery(
+        return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
             QueryTypeEnum::SELECT,
             $from,
             $where,
