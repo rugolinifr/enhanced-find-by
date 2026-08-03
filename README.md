@@ -34,7 +34,7 @@ Other classes are considered `@internal`.
 
 Basic usage examples:
 ```php
-$finder = (new Rugolinifr\EnhancedFindBy\Factory\EnhancedFindByFactory())
+$finder = (new \Rugolinifr\EnhancedFindBy\Factory\EnhancedFindByFactory())
     ->createEnhancedFindBy($entityManager);
 
 // fetches every `Person` entity
@@ -274,6 +274,26 @@ and these two Doctrine methods:
 ```php
 $query->setMaxResults(30)->setFirstResult(60);
 ```
+
+### The `count()` method
+
+Since `v1.2.*`,
+it is possible to count the number of entities:
+
+```php
+$counter = (new \Rugolinifr\EnhancedFindBy\Factory\EnhancedFindByFactory())
+    ->createEnhancedCount($entityManager);
+
+$count = $counter->count(
+    from: Person::class,
+    where: [
+        'name like' => 'John%',
+        'eyeColor !=' => 'blue',
+    ],
+);
+```
+
+Both the `$from` and `$where` parameters behave the same as those from the `findBy()` method.
 
 ## Known limitations
 
