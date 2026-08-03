@@ -6,6 +6,6 @@ namespace Rugolinifr\EnhancedFindBy\Contract;
 
 use InvalidArgumentException;
 
-class EnhancedCountInvalidArgumentInterface extends InvalidArgumentException
+class EnhancedCountInvalidArgumentException extends InvalidArgumentException
 {
 }

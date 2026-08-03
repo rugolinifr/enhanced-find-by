@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\MappingException as DoctrineMappingException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException as DoctrineOrmQueryException;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
@@ -14,6 +15,7 @@ use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedFindByException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
+use Throwable;
 
 class QueryBuilder
 {
@@ -51,7 +53,9 @@ class QueryBuilder
             $query = $this->setLimit($limit, $offset, $query);
             return $queryType === QueryTypeEnum::SELECT ? $query->getResult() : $query->getSingleScalarResult();
         } catch (DoctrineOrmQueryException $e) { //@phpstan-ignore catch.neverThrown
-            throw $this->convertDoctrineException($e);
+            throw $this->convertDoctrineOrmQueryException($e);
+        } catch (DoctrineMappingException $e) {  //@phpstan-ignore catch.neverThrown
+            throw $this->convertDoctrineMappingException($e);
         }
     }
 
@@ -199,8 +203,8 @@ class QueryBuilder
         return $query;
     }
 
-    private function convertDoctrineException( //@phpstan-ignore method.unused
-        DoctrineOrmQueryException $e
+    private function convertDoctrineOrmQueryException( //@phpstan-ignore method.unused
+        Throwable $e,
     ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
         $pattern = '/has no field or association named ([a-zA-Z0-9_]+)/';
         if (1 === preg_match($pattern, $e->getMessage(), $matches)) {
@@ -209,5 +213,16 @@ class QueryBuilder
         }
         $msg = "An error occurred while executing the DQL query: {$e->getMessage()}";
         return new EnhancedFindByException($msg, previous: $e);
+    }
+
+    private function convertDoctrineMappingException( //@phpstan-ignore method.unused
+        Throwable $e,
+    ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
+        $pattern = "/^Class \".*\" is not a valid entity or mapped super class\.$/";
+        if (1 === preg_match($pattern, $e->getMessage())) {
+            return new EFBInvalidArgumentException($e->getMessage(), previous: $e);
+        }
+        $msg = "An error occurred while executing the DQL query: {$e->getMessage()}";
+        return new EFBInvalidArgumentException($msg, previous: $e);
     }
 }

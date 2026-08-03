@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInterface;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
@@ -114,7 +115,7 @@ class AbstractTestEntity extends TestCase
     ): void {
         try {
             $this->countResult = static::$counter->count($classname, $where);
-        } catch (EnhancedCountExceptionInterface $e) {
+        } catch (EnhancedCountExceptionInterface|EnhancedCountInvalidArgumentException $e) {
             $this->lastException = $e;
         }
     }

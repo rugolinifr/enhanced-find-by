@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Rugolinifr\EnhancedFindBy\Implementation\Finder;
 
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInterface;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentInterface;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilder;
@@ -26,7 +26,7 @@ class EnhancedCount implements EnhancedCountInterface
             //@phpstan-ignore return.type
             return $this->queryBuilder->buildThenExecuteQuery(QueryTypeEnum::COUNT, $from, $where);
         } catch (EFBInvalidArgumentException $e) {
-            throw new EnhancedCountInvalidArgumentInterface($e->getMessage(), previous: $e);
+            throw new EnhancedCountInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedFindByExceptionInterface $e) {
             throw new EnhancedCountException($e->getMessage(), previous: $e);
         }

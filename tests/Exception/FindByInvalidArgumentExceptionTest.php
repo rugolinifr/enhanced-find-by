@@ -11,8 +11,15 @@ use Rugolinifr\EnhancedFindBy\Tests\Shared\AbstractTestEntity;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\ColorEnum;
 use stdClass;
 
-class InvalidArgumentExceptionTest extends AbstractTestEntity
+class FindByInvalidArgumentExceptionTest extends AbstractTestEntity
 {
+
+    public function testInvalidFrom(): void
+    {
+        $this->givenIHaveAnEnhancedFindBy();
+        $this->whenISearchEntityByOperator([], stdClass::class);
+        $this->thenIGetInvalidArgumentException();
+    }
 
     /**
      * @param array<string, mixed> $criteria
