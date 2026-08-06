@@ -6,6 +6,9 @@ namespace Rugolinifr\EnhancedFindBy\Tests\Shared;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountExceptionInterface;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInterface;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
@@ -20,9 +23,11 @@ class AbstractTestEntity extends TestCase
 {
     protected static EntityManagerInterface $entityManager;
     protected static EnhancedFindByInterface $finder;
+    protected static EnhancedCountInterface $counter;
 
     /** @var Owner[]|Product[]  */
     protected ?array $resultSet = null;
+    protected ?int $countResult = null;
     protected ?Throwable $lastException = null;
 
     public static function setUpBeforeClass(): void
@@ -30,10 +35,16 @@ class AbstractTestEntity extends TestCase
         exec('bin/console orm:schema-tool:drop --force -q');
         exec('bin/console orm:schema-tool:update --force -q');
         static::$entityManager = EntityManagerFactory::createEntityManager();
-        static::$finder = (new EnhancedFindByFactory())->createEnhancedFindBy(static::$entityManager);
+        $factory = new EnhancedFindByFactory();
+        static::$finder = $factory->createEnhancedFindBy(static::$entityManager);
+        static::$counter = $factory->createEnhancedCount(static::$entityManager);
     }
 
     protected function givenIHaveAnEnhancedFindBy(): void
+    {
+    }
+
+    protected function givenIHaveAnEnhancedCount(): void
     {
     }
 
@@ -88,6 +99,23 @@ class AbstractTestEntity extends TestCase
                 offset: $offset,
             );
         } catch (EnhancedFindByExceptionInterface|EnhancedFindByInvalidArgumentException $e) {
+            $this->lastException = $e;
+        }
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $classname
+     * @param array<string, mixed> $where
+     */
+    protected function whenICountEntities(
+        string $classname,
+        array $where,
+    ): void {
+        try {
+            $this->countResult = static::$counter->count($classname, $where);
+        } catch (EnhancedCountExceptionInterface|EnhancedCountInvalidArgumentException $e) {
             $this->lastException = $e;
         }
     }

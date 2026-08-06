@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rugolinifr\EnhancedFindBy\Implementation\Finder;
+namespace Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
