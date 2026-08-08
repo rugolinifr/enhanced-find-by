@@ -42,8 +42,11 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
         array $where = [],
     ): int {
         try {
-            //@phpstan-ignore return.type
-            return $this->queryBuilder->buildThenExecuteQuery(QueryTypeEnum::COUNT, $from, $where);
+            return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
+                QueryTypeEnum::COUNT,
+                $from,
+                $where,
+            );
         } catch (EFBInvalidArgumentException $e) {
             throw new EnhancedCountInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedFindByExceptionInterface $e) {
