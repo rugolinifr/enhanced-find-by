@@ -35,13 +35,13 @@ class EnhancedFindByFactory
         EntityManagerInterface $entityManager,
         bool $fromCache = true,
     ): EnhancedImplementation {
+        if ($fromCache === false) {
+            return $this->createImplementation($entityManager);
+        }
         if ($this->implementation === null) {
             $this->implementation = $this->createImplementation($entityManager);
         }
-        if ($fromCache) {
-            return $this->implementation;
-        }
-        return $this->createImplementation($entityManager);
+        return $this->implementation;
     }
 
     private function createImplementation(EntityManagerInterface $entityManager): EnhancedImplementation
