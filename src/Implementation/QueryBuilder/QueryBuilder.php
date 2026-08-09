@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\MappingException as DoctrineMappingException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException as DoctrineOrmQueryException;
 use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
+use Rugolinifr\EnhancedFindBy\Implementation\QueryProcessor\QueryProcessorFactory;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
@@ -21,6 +22,7 @@ class QueryBuilder
     public function __construct(
         private ComparisonFactory $comparisonFactory,
         private EntityManagerInterface $entityManager,
+        private QueryProcessorFactory $queryProcessorFactory,
     ){
     }
 
@@ -51,10 +53,14 @@ class QueryBuilder
             $query = $this->entityManager->createQuery($dql);
             $query = $this->setQueryParameters($incrementor, $query);
             $query = $this->setLimit($limit, $offset, $query);
-            return $queryType === QueryTypeEnum::SELECT ? $query->getResult() : $query->getSingleScalarResult();
-        } catch (DoctrineOrmQueryException $e) { //@phpstan-ignore catch.neverThrown
+            if ($queryType === QueryTypeEnum::COUNT) {
+                return $query->getSingleScalarResult(); //@phpstan-ignore return.type
+            }
+            $processor = $this->queryProcessorFactory->createQueryProcessor($query, $where, $orderBy, $limit);
+            return $processor->getEntities(); //@phpstan-ignore return.type
+        } catch (DoctrineOrmQueryException $e) {
             throw $this->convertDoctrineOrmQueryException($e);
-        } catch (DoctrineMappingException $e) {  //@phpstan-ignore catch.neverThrown
+        } catch (DoctrineMappingException $e) {
             throw $this->convertDoctrineMappingException($e);
         }
     }
@@ -134,7 +140,7 @@ class QueryBuilder
         array $orderByClauses,
         Incrementor $incrementor,
     ): string {
-        $select = $this->buildSelect($queryType, $orderByClauses);
+        $select = $this->buildSelect($queryType);
         $from = "FROM $entityClassname e0";
         $joins = $this->buildJoins($comparisons, $orderByClauses, $incrementor);
         $where = $this->buildWhere($comparisons, $incrementor);
@@ -142,18 +148,11 @@ class QueryBuilder
         return "$select\n$from\n$joins\n$where\n$orderBy";
     }
 
-    /**
-     * @param OrderBy[] $orderByClauses
-     */
     private function buildSelect(
         QueryTypeEnum $queryType,
-        array $orderByClauses,
     ): string {
         if ($queryType === QueryTypeEnum::COUNT) {
             return  'SELECT COUNT(DISTINCT e0)';
-        }
-        if (empty($orderByClauses)) {
-            return 'SELECT DISTINCT e0';
         }
         return 'SELECT e0';
     }
@@ -236,7 +235,7 @@ class QueryBuilder
         return $query;
     }
 
-    private function convertDoctrineOrmQueryException( //@phpstan-ignore method.unused
+    private function convertDoctrineOrmQueryException(
         Throwable $e,
     ): ImplementationInvalidArgumentException|EnhancedImplementationException {
         $pattern = '/has no field or association named ([a-zA-Z0-9_]+)/';
@@ -248,7 +247,7 @@ class QueryBuilder
         return new EnhancedImplementationException($msg, previous: $e);
     }
 
-    private function convertDoctrineMappingException( //@phpstan-ignore method.unused
+    private function convertDoctrineMappingException(
         Throwable $e,
     ): ImplementationInvalidArgumentException|EnhancedImplementationException {
         $pattern = "/^Class \".*\" is not a valid entity or mapped super class\.$/";

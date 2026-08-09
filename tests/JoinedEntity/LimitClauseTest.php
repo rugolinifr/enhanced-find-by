@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rugolinifr\EnhancedFindBy\Tests\JoinedEntity;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Tests\Entity\Owner;
 use Rugolinifr\EnhancedFindBy\Tests\Shared\AbstractTestEntity;
@@ -18,25 +19,77 @@ class LimitClauseTest extends AbstractTestEntity
         $joinedEntityFixture->createOwnerForLimitTest();
     }
 
-    public function testLimitWithToManyJoin(): void
-    {
+
+    /**
+     * @param array<string, mixed> $where
+     * @param array<string, string> $orderBy
+     * @param string[] $expectedNames
+     */
+    #[DataProvider('provideDataForLimitWithOrder')]
+    public function testLimitWithToManyJoin(
+        array $where,
+        array $orderBy,
+        array $expectedNames,
+    ): void {
         $this->givenIHaveAnEnhancedFindBy();
-        $this->whenILimitEntitiesThroughToManyInnerJoin();
-        $this->thenIGetExpectedEntities(['fanny', 'georges'], Owner::class);
+        $this->whenILimitEntitiesThroughToManyInnerJoin($where, $orderBy);
+        $this->thenIGetExpectedEntities($expectedNames, Owner::class);
     }
 
     /**
-     * fanny has multiple products, meaning the join returns multiple rows.
-     * How does the LIMIT clause handle that ?
+     * @return array<string, array<string, mixed>>
      */
-    private function whenILimitEntitiesThroughToManyInnerJoin(): void
+    public static function provideDataForLimitWithOrder(): array
     {
+        return [
+            'just WHERE clause joins' => [
+                'where' => ['stores.products.id >' => 0],
+                'orderBy' => [],
+                'expectedNames' => ['eric', 'fanny', 'georges'],
+            ],
+            'just ORDER BY ASC clause joins' => [
+                'where' => [],
+                'orderBy' => ['stores.products.id' => 'ASC'],
+                'expectedNames' => ['eric', 'fanny', 'georges'],
+            ],
+            'just ORDER BY DESC clause joins' => [
+                'where' => [],
+                'orderBy' => ['stores.products.id' => 'DESC'],
+                'expectedNames' => ['georges', 'fanny', 'eric'],
+            ],
+            'WHERE and ORDER BY clauses current entity ASC' => [
+                'where' => ['stores.products.id >' => 0],
+                'orderBy' => ['id' => 'ASC'],
+                'expectedNames' => ['eric', 'fanny', 'georges'],
+            ],
+            'WHERE and ORDER BY clauses current entity DESC' => [
+                'where' => ['stores.products.id >' => 0],
+                'orderBy' => ['id' => 'DESC'],
+                'expectedNames' => ['georges', 'fanny', 'eric'],
+            ],
+            'WHERE and ORDER BY clauses joined entity ASC' => [
+                'where' => ['stores.products.id >' => 0],
+                'orderBy' => ['stores.products.id' => 'ASC'],
+                'expectedNames' => ['eric', 'fanny', 'georges'],
+            ],
+            'WHERE and ORDER BY clauses joined entity DESC' => [
+                'where' => ['stores.products.id >' => 0],
+                'orderBy' => ['stores.products.id' => 'DESC'],
+                'expectedNames' => ['georges', 'fanny', 'eric'],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $where
+     * @param array<string, string> $orderBy
+     */
+    private function whenILimitEntitiesThroughToManyInnerJoin(
+        array $where,
+        array $orderBy = [],
+    ): void {
         try {
-            $where = [
-                'stores.products.id >' => 0,
-                'name =' => ['fanny', 'georges']
-            ];
-            $this->resultSet = static::$finder->findBy(Owner::class, $where, limit: 2, offset: 0);
+            $this->resultSet = static::$finder->findBy(Owner::class, $where, $orderBy, limit: 3, offset: 0);
         } catch (EnhancedFindByExceptionInterface $e) {
             $this->lastException = $e;
         }
