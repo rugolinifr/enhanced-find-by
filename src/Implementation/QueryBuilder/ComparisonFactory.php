@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Comparison\EquivalenceComparison;
 use Rugolinifr\EnhancedFindBy\Implementation\Comparison\LikenessComparison;
 use Rugolinifr\EnhancedFindBy\Implementation\Comparison\NullOrDifferentComparison;
@@ -14,6 +13,7 @@ use Rugolinifr\EnhancedFindBy\Implementation\Comparison\SizeComparison;
 use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 
@@ -26,6 +26,9 @@ class ComparisonFactory
     ) {
     }
 
+    /**
+     * @throws ImplementationInvalidArgumentException
+     */
     public function createComparison(
         string $propertyPathAndOperator,
         mixed $value,
@@ -34,7 +37,7 @@ class ComparisonFactory
         $splitPropertyPath = explode('.', $cleanPropertyPathAndOperator);
         $size = count($splitPropertyPath);
         if ($size < 2) {
-            throw new EFBInvalidArgumentException("The property path \"$propertyPathAndOperator\" is invalid.");
+            throw new ImplementationInvalidArgumentException("The property path \"$propertyPathAndOperator\" is invalid.");
         }
         $splitPropertyPath = $this->cleanUpDoctrineEmbeddable($splitPropertyPath);
         $operator = $splitPropertyPath[$size - 1];
@@ -51,6 +54,8 @@ class ComparisonFactory
 
     /**
      * @param string[] $splitPropertyPath
+     *
+     * @throws ImplementationInvalidArgumentException
      */
     private function createAppropriateComparison(
         string $cleanPropertyPathAndOperator,
@@ -80,7 +85,7 @@ class ComparisonFactory
         if ($operator === 'n_not_like') {
             return $this->nullOrUnlikeness($cleanPropertyPathAndOperator, $splitPropertyPath, $operator, $value);
         }
-        throw new EFBInvalidArgumentException("The property path \"$propertyPathAndOperator\" has invalid operator.");
+        throw new ImplementationInvalidArgumentException("The property path \"$propertyPathAndOperator\" has invalid operator.");
     }
 
     /**
@@ -239,6 +244,9 @@ class ComparisonFactory
         return new NullOrNotLikeComparison($unlike, $this->aliasedPropertyProvider, $splitPropertyPath);
     }
 
+    /**
+     * @throws ImplementationInvalidArgumentException
+     */
     public function createOrderBy(string $propertyPath, string $sortStrategy): OrderBy
     {
         $cleanPropertyPath = $this->cleanPropertyPathAndOperator($propertyPath);
@@ -261,6 +269,9 @@ class ComparisonFactory
         return str_replace(' ', '.', $cleaned);
     }
 
+    /**
+     * @throws ImplementationInvalidArgumentException
+     */
     private function cleanSortStrategy(string $sortStrategy): string
     {
         if (in_array($sortStrategy, ['asc', 'ASC'])) {
@@ -269,6 +280,6 @@ class ComparisonFactory
         if (in_array($sortStrategy, ['desc', 'DESC'])) {
             return 'DESC';
         }
-        throw new EFBInvalidArgumentException("Invalid sort strategy value \"$sortStrategy\".");
+        throw new ImplementationInvalidArgumentException("Invalid sort strategy value \"$sortStrategy\".");
     }
 }

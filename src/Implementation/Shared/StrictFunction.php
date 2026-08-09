@@ -7,7 +7,7 @@ namespace Rugolinifr\EnhancedFindBy\Implementation\Shared;
 use RuntimeException;
 
 /**
- * Narrow the return types of some core PHP functions.
+ * Narrows the return types of some core PHP functions.
  */
 class StrictFunction
 {

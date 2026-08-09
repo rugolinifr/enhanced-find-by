@@ -11,6 +11,8 @@ interface ComparisonInterface
      *
      * Does not return the `WHERE` word.
      * Returns the compared value as a parameter (e.g. `:my_parameter`).
+     *
+     * @throws EnhancedImplementationInvalidArgumentException
      */
     public function getWhereDql(Incrementor $incrementor): string;
 

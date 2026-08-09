@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rugolinifr\EnhancedFindBy\Implementation\Shared;
+namespace Rugolinifr\EnhancedFindBy\Implementation\Finder;
 
 use Exception;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;

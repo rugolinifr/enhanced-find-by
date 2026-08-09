@@ -20,9 +20,6 @@ class NullOrNotLikeComparison implements ComparisonInterface
     ) {
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getWhereDql(Incrementor $incrementor): string
     {
         $aliasedProperty = $this->aliasedPropertyProvider->getAliasedProperty($this->splitProperty, $incrementor);
@@ -30,9 +27,6 @@ class NullOrNotLikeComparison implements ComparisonInterface
         return "( $aliasedProperty IS NULL OR ( $dql ) )";
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getJoinsDql(Incrementor $incrementor): array
     {
         return $this->notLike->getJoinsDql($incrementor);

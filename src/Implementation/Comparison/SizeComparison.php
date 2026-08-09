@@ -6,7 +6,7 @@ namespace Rugolinifr\EnhancedFindBy\Implementation\Comparison;
 
 use BackedEnum;
 use DateTimeInterface;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 
 class SizeComparison extends AbstractComparison
@@ -14,13 +14,13 @@ class SizeComparison extends AbstractComparison
     protected function handleMultipleValues(array $values, Incrementor $incrementor): string
     {
         $msg = "Invalid value for the property \"$this->propertyPath\": array is forbidden.";
-        throw new EFBInvalidArgumentException($msg);
+        throw new ImplementationInvalidArgumentException($msg);
     }
 
     protected function handleNullValue(Incrementor $incrementor): string
     {
         $msg = "Invalid value for the property \"$this->propertyPath\": NULL is forbidden.";
-        throw new EFBInvalidArgumentException($msg);
+        throw new ImplementationInvalidArgumentException($msg);
     }
 
     protected function handleSingleValue(mixed $value, Incrementor $incrementor): string
@@ -28,7 +28,7 @@ class SizeComparison extends AbstractComparison
         if ($this->isValidValue($value)) {
             return $this->handleValidSingleValue($incrementor, $value);
         }
-        throw new EFBInvalidArgumentException("Invalid value for the \"$this->propertyPath\" property.");
+        throw new ImplementationInvalidArgumentException("Invalid value for the \"$this->propertyPath\" property.");
     }
 
     private function isValidValue(mixed $value): bool
