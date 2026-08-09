@@ -8,7 +8,7 @@ use BackedEnum;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
 use Throwable;
@@ -52,7 +52,7 @@ class EquivalenceComparison extends AbstractMultipleValuesComparison
         if ($this->isValidSingleValue($value)) {
             return $this->handleValidSingleValue($incrementor, $value);
         }
-        throw new EIInvalidArgumentException("Invalid value for the \"$this->propertyPath\" property.");
+        throw new ImplementationInvalidArgumentException("Invalid value for the \"$this->propertyPath\" property.");
     }
 
     private function isValidSingleValue(mixed $value): bool

@@ -13,7 +13,7 @@ use Rugolinifr\EnhancedFindBy\Implementation\Comparison\SizeComparison;
 use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 
@@ -27,7 +27,7 @@ class ComparisonFactory
     }
 
     /**
-     * @throws EIInvalidArgumentException
+     * @throws ImplementationInvalidArgumentException
      */
     public function createComparison(
         string $propertyPathAndOperator,
@@ -37,7 +37,7 @@ class ComparisonFactory
         $splitPropertyPath = explode('.', $cleanPropertyPathAndOperator);
         $size = count($splitPropertyPath);
         if ($size < 2) {
-            throw new EIInvalidArgumentException("The property path \"$propertyPathAndOperator\" is invalid.");
+            throw new ImplementationInvalidArgumentException("The property path \"$propertyPathAndOperator\" is invalid.");
         }
         $splitPropertyPath = $this->cleanUpDoctrineEmbeddable($splitPropertyPath);
         $operator = $splitPropertyPath[$size - 1];
@@ -55,7 +55,7 @@ class ComparisonFactory
     /**
      * @param string[] $splitPropertyPath
      *
-     * @throws EIInvalidArgumentException
+     * @throws ImplementationInvalidArgumentException
      */
     private function createAppropriateComparison(
         string $cleanPropertyPathAndOperator,
@@ -85,7 +85,7 @@ class ComparisonFactory
         if ($operator === 'n_not_like') {
             return $this->nullOrUnlikeness($cleanPropertyPathAndOperator, $splitPropertyPath, $operator, $value);
         }
-        throw new EIInvalidArgumentException("The property path \"$propertyPathAndOperator\" has invalid operator.");
+        throw new ImplementationInvalidArgumentException("The property path \"$propertyPathAndOperator\" has invalid operator.");
     }
 
     /**
@@ -245,7 +245,7 @@ class ComparisonFactory
     }
 
     /**
-     * @throws EIInvalidArgumentException
+     * @throws ImplementationInvalidArgumentException
      */
     public function createOrderBy(string $propertyPath, string $sortStrategy): OrderBy
     {
@@ -270,7 +270,7 @@ class ComparisonFactory
     }
 
     /**
-     * @throws EIInvalidArgumentException
+     * @throws ImplementationInvalidArgumentException
      */
     private function cleanSortStrategy(string $sortStrategy): string
     {
@@ -280,6 +280,6 @@ class ComparisonFactory
         if (in_array($sortStrategy, ['desc', 'DESC'])) {
             return 'DESC';
         }
-        throw new EIInvalidArgumentException("Invalid sort strategy value \"$sortStrategy\".");
+        throw new ImplementationInvalidArgumentException("Invalid sort strategy value \"$sortStrategy\".");
     }
 }

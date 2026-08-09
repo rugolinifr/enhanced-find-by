@@ -11,7 +11,7 @@ use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilder;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryTypeEnum;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 
 class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountInterface
 {
@@ -37,7 +37,7 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
                 $limit,
                 $offset,
             );
-        } catch (EIInvalidArgumentException $e) {
+        } catch (ImplementationInvalidArgumentException $e) {
             throw new EnhancedFindByInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedImplementationException $e) {
             throw new EnhancedFindByException($e->getMessage(), previous: $e);
@@ -54,7 +54,7 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
                 $from,
                 $where,
             );
-        } catch (EIInvalidArgumentException $e) {
+        } catch (ImplementationInvalidArgumentException $e) {
             throw new EnhancedCountInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedImplementationException $e) {
             throw new EnhancedCountException($e->getMessage(), previous: $e);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rugolinifr\EnhancedFindBy\Implementation\Comparison;
 
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 
 class NullOrDifferentComparison extends EquivalenceComparison
@@ -19,6 +19,6 @@ class NullOrDifferentComparison extends EquivalenceComparison
     protected function handleNullValue(Incrementor $incrementor): string
     {
         $msg = "Invalid value for the property \"$this->propertyPath\": NULL is forbidden.";
-        throw new EIInvalidArgumentException($msg);
+        throw new ImplementationInvalidArgumentException($msg);
     }
 }
