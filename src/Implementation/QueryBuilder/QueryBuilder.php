@@ -36,10 +36,8 @@ class QueryBuilder
     {
         try {
             return $this->buildThenExecuteQueryOrAbort($data);
-        } catch (DoctrineOrmQueryException $e) {
+        } catch (DoctrineOrmQueryException|DoctrineMappingException $e) {
             throw $this->convertDoctrineOrmQueryException($e);
-        } catch (DoctrineMappingException $e) {
-            throw $this->convertDoctrineMappingException($e);
         }
     }
 
@@ -241,13 +239,6 @@ class QueryBuilder
             $msg = "One of the given parameter contains an invalid property path: \"$matches[1]\".";
             return new ImplementationInvalidArgumentException($msg, previous: $e);
         }
-        $msg = "An error occurred while executing the DQL query: {$e->getMessage()}";
-        return new EnhancedImplementationException($msg, previous: $e);
-    }
-
-    private function convertDoctrineMappingException(
-        Throwable $e,
-    ): ImplementationInvalidArgumentException|EnhancedImplementationException {
         $pattern = "/^Class \".*\" is not a valid entity or mapped super class\.$/";
         if (1 === preg_match($pattern, $e->getMessage())) {
             return new ImplementationInvalidArgumentException($e->getMessage(), previous: $e);
