@@ -9,6 +9,7 @@ use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilder;
+use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilderData;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryTypeEnum;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
@@ -29,7 +30,7 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
         int $offset = 0,
     ): array {
         try {
-            return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
+            $data = new QueryBuilderData(
                 QueryTypeEnum::SELECT,
                 $from,
                 $where,
@@ -37,6 +38,7 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
                 $limit,
                 $offset,
             );
+            return $this->queryBuilder->buildThenExecuteQuery($data); //@phpstan-ignore return.type
         } catch (ImplementationInvalidArgumentException $e) {
             throw new EnhancedFindByInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedImplementationException $e) {
@@ -49,11 +51,8 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
         array $where = [],
     ): int {
         try {
-            return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
-                QueryTypeEnum::COUNT,
-                $from,
-                $where,
-            );
+            $data = new QueryBuilderData(QueryTypeEnum::COUNT, $from, $where);
+            return $this->queryBuilder->buildThenExecuteQuery($data); //@phpstan-ignore return.type
         } catch (ImplementationInvalidArgumentException $e) {
             throw new EnhancedCountInvalidArgumentException($e->getMessage(), previous: $e);
         } catch (EnhancedImplementationException $e) {

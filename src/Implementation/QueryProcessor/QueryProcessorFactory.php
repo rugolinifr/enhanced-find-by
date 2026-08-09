@@ -5,20 +5,15 @@ declare(strict_types=1);
 namespace Rugolinifr\EnhancedFindBy\Implementation\QueryProcessor;
 
 use Doctrine\ORM\Query;
+use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilderData;
 
 class QueryProcessorFactory
 {
-    /**
-     * @param array<string, string> $orderBy
-     * @param array<string, mixed> $where
-     */
     public function createQueryProcessor(
+        QueryBuilderData $data,
         Query $query,
-        array $where = [],
-        array $orderBy = [],
-        ?int $limit = null,
     ): QueryProcessorInterface {
-        if ($limit === null || !$this->hasJoin($where, $orderBy)) {
+        if ($data->limit === null || !$this->hasJoin($data->where, $data->orderBy)) {
             return new SimpleQueryProcessor($query);
         }
         return new PaginatedQueryProcessor($query);

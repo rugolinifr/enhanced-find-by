@@ -27,37 +27,15 @@ class QueryBuilder
     }
 
     /**
-     * @template T of object
-     *
-     * @param class-string<T> $from
-     * @param array<string, mixed> $where
-     * @param array<string, string> $orderBy
-     * @return int|array<int, T>
+     * @return int|array<int, object>
      *
      * @throws ImplementationInvalidArgumentException
      * @throws EnhancedImplementationException
      */
-    public function buildThenExecuteQuery(
-        QueryTypeEnum $queryType,
-        string $from,
-        array $where = [],
-        array $orderBy = [],
-        ?int $limit = null,
-        int $offset = 0,
-    ): int|array {
+    public function buildThenExecuteQuery(QueryBuilderData $data): int|array
+    {
         try {
-            $incrementor = new Incrementor();
-            $comparisons = $this->createEveryComparisons($where);
-            $orderByClauses = $this->createEveryOrderByClauses($orderBy);
-            $dql = $this->buildQueryDql($queryType, $from, $comparisons, $orderByClauses, $incrementor);
-            $query = $this->entityManager->createQuery($dql);
-            $query = $this->setQueryParameters($incrementor, $query);
-            $query = $this->setLimit($limit, $offset, $query);
-            if ($queryType === QueryTypeEnum::COUNT) {
-                return $query->getSingleScalarResult(); //@phpstan-ignore return.type
-            }
-            $processor = $this->queryProcessorFactory->createQueryProcessor($query, $where, $orderBy, $limit);
-            return $processor->getEntities(); //@phpstan-ignore return.type
+            return $this->buildThenExecuteQueryOrAbort($data);
         } catch (DoctrineOrmQueryException $e) {
             throw $this->convertDoctrineOrmQueryException($e);
         } catch (DoctrineMappingException $e) {
@@ -66,15 +44,37 @@ class QueryBuilder
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @return int|object[]
+     *
+     * @throws DoctrineMappingException
+     * @throws DoctrineOrmQueryException
+     * @throws ImplementationInvalidArgumentException
+     */
+    private function buildThenExecuteQueryOrAbort(QueryBuilderData $data): int|array
+    {
+        $incrementor = new Incrementor();
+        $comparisons = $this->createEveryComparisons($data);
+        $orderByClauses = $this->createEveryOrderByClauses($data);
+        $dql = $this->buildQueryDql($data, $comparisons, $orderByClauses, $incrementor);
+        $query = $this->entityManager->createQuery($dql);
+        $query = $this->setQueryParameters($incrementor, $query);
+        $query = $this->setLimit($data, $query);
+        if ($data->queryType === QueryTypeEnum::COUNT) {
+            return $query->getSingleScalarResult(); //@phpstan-ignore return.type
+        }
+        $processor = $this->queryProcessorFactory->createQueryProcessor($data, $query);
+        return $processor->getEntities();
+    }
+
+    /**
      * @return ComparisonInterface[]
      *
      * @throws ImplementationInvalidArgumentException
      */
-    private function createEveryComparisons(array $criteria): array
+    private function createEveryComparisons(QueryBuilderData $data): array
     {
         $comparisons = [];
-        foreach ($criteria as $propertyPathAndOperator => $value) {
+        foreach ($data->where as $propertyPathAndOperator => $value) {
             $comparisons[] = $this->createNextComparison($propertyPathAndOperator, $value);
         }
         return $comparisons;
@@ -92,15 +92,14 @@ class QueryBuilder
     }
 
     /**
-     * @param string[] $orderBy
      * @return OrderBy[]
      *
      * @throws ImplementationInvalidArgumentException
      */
-    private function createEveryOrderByClauses(array $orderBy): array
+    private function createEveryOrderByClauses(QueryBuilderData $data): array
     {
         $orderByClauses = [];
-        foreach ($orderBy as $propertyPath => $sortStrategy) {
+        foreach ($data->orderBy as $propertyPath => $sortStrategy) {
             $orderByClauses[] = $this->createNextOrderBy($propertyPath, $sortStrategy);
         }
         return $orderByClauses;
@@ -134,14 +133,13 @@ class QueryBuilder
      * @throws ImplementationInvalidArgumentException
      */
     private function buildQueryDql(
-        QueryTypeEnum $queryType,
-        string $entityClassname,
+        QueryBuilderData $data,
         array $comparisons,
         array $orderByClauses,
         Incrementor $incrementor,
     ): string {
-        $select = $this->buildSelect($queryType);
-        $from = "FROM $entityClassname e0";
+        $select = $this->buildSelect($data->queryType);
+        $from = "FROM $data->from e0";
         $joins = $this->buildJoins($comparisons, $orderByClauses, $incrementor);
         $where = $this->buildWhere($comparisons, $incrementor);
         $orderBy = $this->buildOrderBy($orderByClauses, $incrementor);
@@ -220,17 +218,17 @@ class QueryBuilder
     /**
      * @throws ImplementationInvalidArgumentException
      */
-    private function setLimit(?int $limit, int $offset, Query $query): Query
+    private function setLimit(QueryBuilderData $data, Query $query): Query
     {
-        if ($limit !== null) {
-            if ($limit <= 0) {
+        if ($data->limit !== null) {
+            if ($data->limit <= 0) {
                 throw new ImplementationInvalidArgumentException('Invalid $limit value: it must be > 0.');
             }
-            $query->setMaxResults($limit);
-            if ($offset < 0) {
+            $query->setMaxResults($data->limit);
+            if ($data->offset < 0) {
                 throw new ImplementationInvalidArgumentException('Invalid $limit offset: it must be >= 0.');
             }
-            $query->setFirstResult($offset);
+            $query->setFirstResult($data->offset);
         }
         return $query;
     }
