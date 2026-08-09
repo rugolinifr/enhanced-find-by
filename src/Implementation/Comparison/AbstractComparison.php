@@ -6,6 +6,7 @@ namespace Rugolinifr\EnhancedFindBy\Implementation\Comparison;
 
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\JoinClauseProvider;
 
@@ -47,16 +48,22 @@ abstract class AbstractComparison implements ComparisonInterface
      * Returns the Doctrine Query Language `WHERE` clause of this comparison when its compared value is an array.
      *
      * @param mixed[] $values
+     *
+     * @throws EIInvalidArgumentException
      */
     abstract protected function handleMultipleValues(array $values, Incrementor $incrementor): string;
 
     /**
      * Returns the Doctrine Query Language `WHERE` clause of this comparison when its compared value is `NULL`.
+     *
+     * @throws EIInvalidArgumentException
      */
     abstract protected function handleNullValue(Incrementor $incrementor): string;
 
     /**
      * Returns the Doctrine Query Language `WHERE` clause of this comparison when its compared value is not an array.
+     *
+     * @throws EIInvalidArgumentException
      */
     abstract protected function handleSingleValue(mixed $value, Incrementor $incrementor): string;
 

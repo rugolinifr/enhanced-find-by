@@ -6,11 +6,12 @@ namespace Rugolinifr\EnhancedFindBy\Implementation\Finder;
 
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInvalidArgumentException;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInterface;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
+use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilder;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryTypeEnum;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
 
 class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountInterface
 {
@@ -27,14 +28,20 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
         ?int $limit = null,
         int $offset = 0,
     ): array {
-        return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
-            QueryTypeEnum::SELECT,
-            $from,
-            $where,
-            $orderBy,
-            $limit,
-            $offset,
-        );
+        try {
+            return $this->queryBuilder->buildThenExecuteQuery( //@phpstan-ignore return.type
+                QueryTypeEnum::SELECT,
+                $from,
+                $where,
+                $orderBy,
+                $limit,
+                $offset,
+            );
+        } catch (EIInvalidArgumentException $e) {
+            throw new EnhancedFindByInvalidArgumentException($e->getMessage(), previous: $e);
+        } catch (EnhancedImplementationException $e) {
+            throw new EnhancedFindByException($e->getMessage(), previous: $e);
+        }
     }
 
     public function count(
@@ -47,9 +54,9 @@ class EnhancedImplementation implements EnhancedFindByInterface, EnhancedCountIn
                 $from,
                 $where,
             );
-        } catch (EFBInvalidArgumentException $e) {
+        } catch (EIInvalidArgumentException $e) {
             throw new EnhancedCountInvalidArgumentException($e->getMessage(), previous: $e);
-        } catch (EnhancedFindByExceptionInterface $e) {
+        } catch (EnhancedImplementationException $e) {
             throw new EnhancedCountException($e->getMessage(), previous: $e);
         }
     }

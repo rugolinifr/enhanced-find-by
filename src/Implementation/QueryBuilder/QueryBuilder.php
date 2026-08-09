@@ -8,11 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\MappingException as DoctrineMappingException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException as DoctrineOrmQueryException;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByExceptionInterface;
-use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInvalidArgumentException as EFBInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\OrderBy\OrderBy;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedFindByException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
+use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as EIInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 use Throwable;
@@ -32,8 +31,9 @@ class QueryBuilder
      * @param array<string, mixed> $where
      * @param array<string, string> $orderBy
      * @return int|array<int, T>
-     * @throws EFBInvalidArgumentException
-     * @throws EnhancedFindByExceptionInterface
+     *
+     * @throws EIInvalidArgumentException
+     * @throws EnhancedImplementationException
      */
     public function buildThenExecuteQuery(
         QueryTypeEnum $queryType,
@@ -62,6 +62,8 @@ class QueryBuilder
     /**
      * @param array<string, mixed> $criteria
      * @return ComparisonInterface[]
+     *
+     * @throws EIInvalidArgumentException
      */
     private function createEveryComparisons(array $criteria): array
     {
@@ -72,10 +74,13 @@ class QueryBuilder
         return $comparisons;
     }
 
+    /**
+     * @throws EIInvalidArgumentException
+     */
     private function createNextComparison(mixed $propertyPathAndOperator, mixed $value): ComparisonInterface
     {
         if (!is_string($propertyPathAndOperator)) {
-            throw new EFBInvalidArgumentException("The \$where parameter expects string as keys.");
+            throw new EIInvalidArgumentException("The \$where parameter expects string as keys.");
         }
         return $this->comparisonFactory->createComparison($propertyPathAndOperator, $value);
     }
@@ -83,6 +88,8 @@ class QueryBuilder
     /**
      * @param string[] $orderBy
      * @return OrderBy[]
+     *
+     * @throws EIInvalidArgumentException
      */
     private function createEveryOrderByClauses(array $orderBy): array
     {
@@ -93,20 +100,23 @@ class QueryBuilder
         return $orderByClauses;
     }
 
+    /**
+     * @throws EIInvalidArgumentException
+     */
     private function createNextOrderBy(mixed $propertyPath, mixed $sortStrategy): OrderBy
     {
         if (!is_string($propertyPath)) {
             $msg = "The \$orderBy parameter expects string key.";
-            throw new EFBInvalidArgumentException($msg);
+            throw new EIInvalidArgumentException($msg);
         }
         if (!is_string($sortStrategy)) {
             $msg = "The \$orderBy parameter expects either 'ASC' or 'DESC' as sort strategy.";
-            throw new EFBInvalidArgumentException($msg);
+            throw new EIInvalidArgumentException($msg);
         }
         $sortStrategy = strtoupper($sortStrategy);
         if ($sortStrategy !== 'ASC' && $sortStrategy !== 'DESC') {
             $msg = "The \$orderBy parameter expects either 'ASC' or 'DESC' as sort strategy.";
-            throw new EFBInvalidArgumentException($msg);
+            throw new EIInvalidArgumentException($msg);
         }
         return $this->comparisonFactory->createOrderBy($propertyPath, $sortStrategy);
     }
@@ -114,6 +124,8 @@ class QueryBuilder
     /**
      * @param OrderBy[] $orderByClauses
      * @param ComparisonInterface[] $comparisons
+     *
+     * @throws EIInvalidArgumentException
      */
     private function buildQueryDql(
         QueryTypeEnum $queryType,
@@ -153,6 +165,8 @@ class QueryBuilder
 
     /**
      * @param ComparisonInterface[] $comparisons
+     *
+     * @throws EIInvalidArgumentException
      */
     private function buildWhere(
         array $comparisons,
@@ -188,15 +202,18 @@ class QueryBuilder
         return $query;
     }
 
+    /**
+     * @throws EIInvalidArgumentException
+     */
     private function setLimit(?int $limit, int $offset, Query $query): Query
     {
         if ($limit !== null) {
             if ($limit <= 0) {
-                throw new EFBInvalidArgumentException('Invalid $limit value: it must be > 0.');
+                throw new EIInvalidArgumentException('Invalid $limit value: it must be > 0.');
             }
             $query->setMaxResults($limit);
             if ($offset < 0) {
-                throw new EFBInvalidArgumentException('Invalid $limit offset: it must be >= 0.');
+                throw new EIInvalidArgumentException('Invalid $limit offset: it must be >= 0.');
             }
             $query->setFirstResult($offset);
         }
@@ -205,24 +222,24 @@ class QueryBuilder
 
     private function convertDoctrineOrmQueryException( //@phpstan-ignore method.unused
         Throwable $e,
-    ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
+    ): EIInvalidArgumentException|EnhancedImplementationException {
         $pattern = '/has no field or association named ([a-zA-Z0-9_]+)/';
         if (1 === preg_match($pattern, $e->getMessage(), $matches)) {
             $msg = "One of the given parameter contains an invalid property path: \"$matches[1]\".";
-            return new EFBInvalidArgumentException($msg, previous: $e);
+            return new EIInvalidArgumentException($msg, previous: $e);
         }
         $msg = "An error occurred while executing the DQL query: {$e->getMessage()}";
-        return new EnhancedFindByException($msg, previous: $e);
+        return new EnhancedImplementationException($msg, previous: $e);
     }
 
     private function convertDoctrineMappingException( //@phpstan-ignore method.unused
         Throwable $e,
-    ): EFBInvalidArgumentException|EnhancedFindByExceptionInterface {
+    ): EIInvalidArgumentException|EnhancedImplementationException {
         $pattern = "/^Class \".*\" is not a valid entity or mapped super class\.$/";
         if (1 === preg_match($pattern, $e->getMessage())) {
-            return new EFBInvalidArgumentException($e->getMessage(), previous: $e);
+            return new EIInvalidArgumentException($e->getMessage(), previous: $e);
         }
         $msg = "An error occurred while executing the DQL query: {$e->getMessage()}";
-        return new EFBInvalidArgumentException($msg, previous: $e);
+        return new EnhancedImplementationException($msg, previous: $e);
     }
 }

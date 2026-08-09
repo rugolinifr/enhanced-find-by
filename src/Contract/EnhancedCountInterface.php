@@ -33,7 +33,7 @@ interface EnhancedCountInterface
      *  mapped to the value to compare against.
      * @return int the number of matching entities.
      *
-     * @throws EnhancedFindByInvalidArgumentException when any given argument is either invalid or forbidden.
+     * @throws EnhancedCountInvalidArgumentException when any given argument is either invalid or forbidden.
      * @throws EnhancedCountExceptionInterface when any error occurs.
      */
     public function count(

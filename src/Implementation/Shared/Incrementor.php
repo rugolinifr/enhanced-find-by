@@ -14,7 +14,7 @@ class Incrementor
     private array $entities = [];
 
     /**
-     * Adds the given parameter value to this incrementor collection then returns is newly created name.
+     * Adds the given parameter value to this incrementor's collection, then returns is newly created name.
      */
     public function addParameter(mixed $value): string
     {
