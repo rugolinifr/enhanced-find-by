@@ -83,4 +83,26 @@ class JoinedEntityFixture extends AbstractFixture
         $this->createAndPersistProduct('filbert', $secondStore);
         $this->createAndPersistProduct('farkleberry', $secondStore);
     }
+
+    public function createOwnerForLimitTest(): void
+    {
+        $georges = $this->createAndPersistOwner(
+            'georges',
+            22,
+            new DateTimeImmutable('2005-04-04 12:00:00'),
+            12.5,
+            true,
+            'Georges exist to test the limit clause with JOIN on ToMany association.',
+            HandSkillEnum::BOTH,
+            400,
+            'Georgia avenue',
+            true,
+            new DateTimeImmutable('1970-10-01 15:00:00'),
+            1.05,
+            PlaceEnum::WAREHOUSE,
+        );
+        $store = $this->createAndPersistStore("The Georges store", $georges);
+        $this->createAndPersistProduct('grape', $store);
+        $this->entityManager->flush();
+    }
 }

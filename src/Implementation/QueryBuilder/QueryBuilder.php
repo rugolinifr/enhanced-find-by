@@ -134,12 +134,28 @@ class QueryBuilder
         array $orderByClauses,
         Incrementor $incrementor,
     ): string {
-        $select = $queryType === QueryTypeEnum::SELECT ? 'SELECT e0' : 'SELECT COUNT(DISTINCT e0)';
+        $select = $this->buildSelect($queryType, $orderByClauses);
         $from = "FROM $entityClassname e0";
         $joins = $this->buildJoins($comparisons, $orderByClauses, $incrementor);
         $where = $this->buildWhere($comparisons, $incrementor);
         $orderBy = $this->buildOrderBy($orderByClauses, $incrementor);
         return "$select\n$from\n$joins\n$where\n$orderBy";
+    }
+
+    /**
+     * @param OrderBy[] $orderByClauses
+     */
+    private function buildSelect(
+        QueryTypeEnum $queryType,
+        array $orderByClauses,
+    ): string {
+        if ($queryType === QueryTypeEnum::COUNT) {
+            return  'SELECT COUNT(DISTINCT e0)';
+        }
+        if (empty($orderByClauses)) {
+            return 'SELECT DISTINCT e0';
+        }
+        return 'SELECT e0';
     }
 
     /**
