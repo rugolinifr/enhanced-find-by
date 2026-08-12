@@ -1,5 +1,11 @@
 # Enhanced findBy() method
 
+![Latest Stable Version](https://poser.pugx.org/rugolinifr/enhanced-find-by/v/stable)
+![License](https://poser.pugx.org/rugolinifr/enhanced-find-by/license)
+![PHP Version Require](https://poser.pugx.org/rugolinifr/enhanced-find-by/require/php)
+![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen.svg)
+![PHPStan](https://img.shields.io/badge/phpstan-level%208-brightgreen.svg)
+
 This package provides an API similar to the famous Doctrine `findBy()` method,
 but offering more capabilities to execute more complex (but still simple) queries.
 
@@ -275,6 +281,9 @@ and these two Doctrine methods:
 $query->setMaxResults(30)->setFirstResult(60);
 ```
 
+Note that mixing any implicit join with the `limit` operator leads to the query being wrapped by a `Paginator`.
+The latter is mandatory when the join targets a `*ToMany` relation to fetch consistent data.
+
 ### The `count()` method
 
 Since `v1.2.*`,
@@ -312,6 +321,13 @@ To contribute or to inspect the project,
 docker compose up -d --build --force-recreate
 docker compose exec php vendor/bin/phpunit tests
 docker compose exec php php -d memory_limit=-1 /usr/local/bin/phpstan analyze
+```
+
+The test coverage may be checked with:
+```shell
+docker compose exec -e XDEBUG_MODE=coverage php \
+    vendor/bin/phpunit --coverage-filter src --coverage-html .local/coverage2 tests
+# now open the `.local/coverage/index.html` in the web browser
 ```
 
 The test database may be opened with:
