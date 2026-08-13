@@ -3,7 +3,7 @@
 ![Latest Stable Version](https://poser.pugx.org/rugolinifr/enhanced-find-by/v/stable)
 ![License](https://poser.pugx.org/rugolinifr/enhanced-find-by/license)
 ![PHP Version Require](https://poser.pugx.org/rugolinifr/enhanced-find-by/require/php)
-![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen.svg)
+![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen.svg)
 ![PHPStan](https://img.shields.io/badge/phpstan-level%208-brightgreen.svg)
 
 This package provides an API similar to the famous Doctrine `findBy()` method,
@@ -326,7 +326,7 @@ docker compose exec php php -d memory_limit=-1 /usr/local/bin/phpstan analyze
 The test coverage may be checked with:
 ```shell
 docker compose exec -e XDEBUG_MODE=coverage php \
-    vendor/bin/phpunit --coverage-filter src --coverage-html .local/coverage2 tests
+    vendor/bin/phpunit --coverage-filter src --coverage-html .local/coverage tests
 # now open the `.local/coverage/index.html` in the web browser
 ```
 
