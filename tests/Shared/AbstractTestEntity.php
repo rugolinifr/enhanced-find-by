@@ -22,6 +22,7 @@ use Throwable;
 class AbstractTestEntity extends TestCase
 {
     protected static EntityManagerInterface $entityManager;
+    protected static EnhancedFindByFactory $factory;
     protected static EnhancedFindByInterface $finder;
     protected static EnhancedCountInterface $counter;
 
@@ -35,17 +36,17 @@ class AbstractTestEntity extends TestCase
         exec('bin/console orm:schema-tool:drop --force -q');
         exec('bin/console orm:schema-tool:update --force -q');
         static::$entityManager = EntityManagerFactory::createEntityManager();
-        $factory = new EnhancedFindByFactory();
-        static::$finder = $factory->createEnhancedFindBy(static::$entityManager);
-        static::$counter = $factory->createEnhancedCount(static::$entityManager);
+        self::$factory = new EnhancedFindByFactory();
     }
 
     protected function givenIHaveAnEnhancedFindBy(): void
     {
+        static::$finder = self::$factory->createEnhancedFindBy(static::$entityManager);
     }
 
     protected function givenIHaveAnEnhancedCount(): void
     {
+        static::$counter = self::$factory->createEnhancedCount(static::$entityManager);
     }
 
     /**
