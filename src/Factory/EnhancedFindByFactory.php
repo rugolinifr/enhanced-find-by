@@ -9,6 +9,7 @@ use Rugolinifr\EnhancedFindBy\Contract\EnhancedCountInterface;
 use Rugolinifr\EnhancedFindBy\Contract\EnhancedFindByInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Finder\EnhancedImplementation;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\ComparisonFactory;
+use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\DqlBuilder;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryBuilder\QueryBuilder;
 use Rugolinifr\EnhancedFindBy\Implementation\QueryProcessor\QueryProcessorFactory;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\AliasedPropertyProvider;
@@ -51,7 +52,8 @@ class EnhancedFindByFactory
         $aliasedPropertyProvider = new AliasedPropertyProvider();
         $comparisonFactory = new ComparisonFactory($entityManager, $joinClauseProvider, $aliasedPropertyProvider);
         $queryProcessorFactory = new QueryProcessorFactory();
-        $queryBuilder = new QueryBuilder($comparisonFactory, $entityManager, $queryProcessorFactory);
+        $dqlBuilder = new DqlBuilder();
+        $queryBuilder = new QueryBuilder($comparisonFactory, $entityManager, $queryProcessorFactory, $dqlBuilder);
         return new EnhancedImplementation($queryBuilder);
     }
 }

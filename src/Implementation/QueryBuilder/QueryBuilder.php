@@ -14,7 +14,6 @@ use Rugolinifr\EnhancedFindBy\Implementation\Shared\ComparisonInterface;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\EnhancedImplementationInvalidArgumentException as ImplementationInvalidArgumentException;
 use Rugolinifr\EnhancedFindBy\Implementation\Shared\Incrementor;
-use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 use Throwable;
 
 class QueryBuilder
@@ -23,7 +22,8 @@ class QueryBuilder
         private ComparisonFactory $comparisonFactory,
         private EntityManagerInterface $entityManager,
         private QueryProcessorFactory $queryProcessorFactory,
-    ){
+        private DqlBuilder $dqlBuilder,
+    ) {
     }
 
     /**
@@ -53,7 +53,7 @@ class QueryBuilder
         $incrementor = new Incrementor();
         $comparisons = $this->createEveryComparisons($data);
         $orderByClauses = $this->createEveryOrderByClauses($data);
-        $dql = $this->buildQueryDql($data, $comparisons, $orderByClauses, $incrementor);
+        $dql = $this->dqlBuilder->buildQueryDql($data, $comparisons, $orderByClauses, $incrementor);
         $query = $this->entityManager->createQuery($dql);
         $query = $this->setQueryParameters($incrementor, $query);
         $query = $this->setLimit($data, $query);
@@ -122,87 +122,6 @@ class QueryBuilder
             throw new ImplementationInvalidArgumentException($msg);
         }
         return $this->comparisonFactory->createOrderBy($propertyPath, $sortStrategy);
-    }
-
-    /**
-     * @param OrderBy[] $orderByClauses
-     * @param ComparisonInterface[] $comparisons
-     *
-     * @throws ImplementationInvalidArgumentException
-     */
-    private function buildQueryDql(
-        QueryBuilderData $data,
-        array $comparisons,
-        array $orderByClauses,
-        Incrementor $incrementor,
-    ): string {
-        $select = $this->buildSelect($data->queryType);
-        $from = "FROM $data->from e0";
-        $joins = $this->buildJoins($comparisons, $orderByClauses, $incrementor);
-        $where = $this->buildWhere($comparisons, $incrementor);
-        $orderBy = $this->buildOrderBy($orderByClauses, $incrementor);
-        return "$select\n$from\n$joins\n$where\n$orderBy";
-    }
-
-    private function buildSelect(
-        QueryTypeEnum $queryType,
-    ): string {
-        if ($queryType === QueryTypeEnum::COUNT) {
-            return  'SELECT COUNT(DISTINCT e0)';
-        }
-        return 'SELECT e0';
-    }
-
-    /**
-     * @param ComparisonInterface[] $comparisons
-     * @param OrderBy[] $orderByClauses
-     */
-    private function buildJoins(
-        array $comparisons,
-        array $orderByClauses,
-        Incrementor $incrementor,
-    ): string {
-        $joinSet = [];
-        $joinsSource = array_merge($comparisons, $orderByClauses);
-        foreach ($joinsSource as $joinSource) {
-            $joins = $joinSource->getJoinsDql($incrementor);
-            foreach ($joins as $join) {
-                $joinSet[$join] = 1;
-            }
-        }
-        $joinsResult = array_keys($joinSet);
-        return implode("\n", $joinsResult);
-    }
-
-    /**
-     * @param ComparisonInterface[] $comparisons
-     *
-     * @throws ImplementationInvalidArgumentException
-     */
-    private function buildWhere(
-        array $comparisons,
-        Incrementor $incrementor,
-    ): string {
-        $where = '';
-        foreach ($comparisons as $comparison) {
-            $where .= $comparison->getWhereDql($incrementor);
-            $where .= ' AND ';
-        }
-        $where = SF::preg_replace('/ AND $/', '', $where);
-        return empty($where) ? '' : "WHERE $where";
-    }
-
-    /**
-     * @param OrderBy[] $orderByClauses
-     */
-    private function buildOrderBy(array $orderByClauses, Incrementor $incrementor): string
-    {
-        $dql = '';
-        foreach ($orderByClauses as $orderBy) {
-            $dql .= $orderBy->getOrderByDql($incrementor) . ', ';
-        }
-        $dql = SF::preg_replace('/, $/', '', $dql);
-        return empty($dql) ? '' : "ORDER BY $dql";
     }
 
     private function setQueryParameters(Incrementor $incrementor, Query $query): Query
