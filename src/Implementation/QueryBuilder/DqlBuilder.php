@@ -13,8 +13,8 @@ use Rugolinifr\EnhancedFindBy\Implementation\Shared\StrictFunction as SF;
 class DqlBuilder
 {
     /**
-     * @param OrderBy[] $orderByClauses
      * @param ComparisonInterface[] $comparisons
+     * @param OrderBy[] $orderByClauses
      *
      * @throws ImplementationInvalidArgumentException
      */
